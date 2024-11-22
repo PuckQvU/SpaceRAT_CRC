@@ -1,0 +1,88 @@
+---
+title: "02_clean_data"
+author: "Puck Quarles van Ufford"
+format: html
+---
+
+```{r}
+#| message: false
+#| label: libraries
+
+library("tidyverse")
+```
+
+## Load data
+
+```{r}
+#| message: false
+#| label: load_data
+
+TCGA_exprs <- read_delim("../data/01_TCGA_exprs.tsv")
+
+cms_labels <- read_delim("../data/01_cms_labels.tsv")
+```
+
+## Clean expression data
+
+```{r}
+#| label: view_exprs
+
+head(TCGA_exprs)
+```
+
+No further cleaning necessary.
+
+## Clean CMS labels
+
+```{r}
+#| label: view_labels
+
+head(cms_labels)
+```
+
+Cleaning steps:
+
+1.  Filter for TCGA data only
+2.  Select and rename relevant columns
+
+```{r}
+#| label: clean_labels
+
+cms_labels <- cms_labels |> 
+  filter(dataset == "tcga") |> 
+  select(c(sample,
+           cms = CMS_final_network_plus_RFclassifier_in_nonconsensus_samples))
+```
+
+## Match expression data and CMS labels
+
+Ensure that the expression data and CMS labels contain the same samples in the same order.
+
+```{r}
+#| label: match_data
+
+length(setdiff(colnames(TCGA_exprs), "feature")) 
+length(cms_labels$sample)
+
+all(setdiff(colnames(TCGA_exprs), "feature") %in% cms_labels$sample)
+
+cms_labels <- cms_labels |> 
+  filter(sample %in% setdiff(colnames(TCGA_exprs), "feature"))
+
+TCGA_exprs <- TCGA_exprs |> 
+  relocate(c("feature", cms_labels$sample))
+
+identical(cms_labels$sample, setdiff(colnames(TCGA_exprs), "feature"))
+```
+
+## Save data
+
+```{r}
+#| label: save_data
+
+write_tsv(TCGA_exprs,
+          file = "../data/02_TCGA_exprs_clean.tsv")
+
+write_tsv(cms_labels,
+          file = "../data/02_cms_labels_clean.tsv")
+```
