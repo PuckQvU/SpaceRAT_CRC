@@ -1,0 +1,9 @@
+project:
+  title: "SpaceRAT_CRC"
+  output-dir: results
+
+format:
+  html:
+    toc: true
+    number-sections: true
+    embed-resources: true

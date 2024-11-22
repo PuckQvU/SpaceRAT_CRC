@@ -1,0 +1,44 @@
+---
+title: "01_load_data"
+author: "Puck Quarles van Ufford"
+format: html
+---
+
+```{r}
+#| message: false
+#| label: libraries
+
+library("tidyverse")
+```
+
+## Download files
+
+Download the following files from the Colorectal Cancer Subtyping Consortium (CRCSC) [Synapse page](https://www.synapse.org/Synapse:syn2623706/files/) (DOI: [10.7303/syn2623706](https://doi.org/10.7303/syn2623706)):
+
+1.  TCGACRC_expression.tsv ([syn2161141](https://www.synapse.org/Synapse:syn2161141))
+2.  cms_labels_public_all.txt ([syn4978511](https://www.synapse.org/Synapse:syn4978511))
+
+Place these files in the "../data/\_raw" folder.
+
+## Load data
+
+```{r}
+#| message: false
+#| label: load_data
+
+TCGA_exprs <- read_delim("../data/_raw/TCGACRC_expression.tsv")
+
+cms_labels <- read_delim("../data/_raw/cms_labels_public_all.txt")
+```
+
+## Save data
+
+```{r}
+#| label: save_data
+
+write_tsv(TCGA_exprs,
+          file = "../data/01_TCGA_exprs.tsv")
+
+write_tsv(cms_labels,
+          file = "../data/01_cms_labels.tsv")
+```
