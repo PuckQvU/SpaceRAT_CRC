@@ -1,0 +1,67 @@
+---
+title: "04_map_data"
+author: "Puck Quarles van Ufford"
+format: html
+---
+
+```{r}
+#| message: false
+#| label: libraries
+
+library("tidyverse")
+library("org.Hs.eg.db")
+library("AnnotationDbi")
+```
+
+## Load data
+
+```{r}
+#| message: false
+#| label: load_data
+
+TCGA_exprs <- read_delim("../data/02_TCGA_exprs_clean.tsv")
+
+NS_exprs <- read_delim("../data/03_TCGA_NS_sim.tsv")
+```
+
+## Map expression data to Entrez ID
+
+```{r}
+#| label: map_TCGA_exprs
+#| warning: false
+
+TCGA_exprs_mapped <- TCGA_exprs |> 
+  mutate(entrez = mapIds(org.Hs.eg.db, 
+                         keys = TCGA_exprs$feature,
+                         column = "ENTREZID", 
+                         keytype = "SYMBOL")) |>  
+  filter(!is.na(entrez)) |> 
+  dplyr::select(!feature) |> 
+  relocate(entrez) 
+```
+
+```{r}
+#| label: map_NS_exprs
+#| warning: false
+
+NS_exprs_mapped <- NS_exprs |> 
+  mutate(entrez = mapIds(org.Hs.eg.db, 
+                         keys = NS_exprs$feature,
+                         column = "ENTREZID", 
+                         keytype = "SYMBOL")) |>  
+  filter(!is.na(entrez)) |> 
+  dplyr::select(!feature) |> 
+  relocate(entrez)
+```
+
+## Save data
+
+```{r}
+#| label: save_data
+
+write_tsv(TCGA_exprs_mapped,
+          file = "../data/04_TCGA_mapped.tsv")
+
+write_tsv(NS_exprs_mapped,
+          file = "../data/04_NS_mapped.tsv")
+```
