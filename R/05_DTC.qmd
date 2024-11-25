@@ -1,0 +1,110 @@
+---
+title: "05_DTC"
+author: "Puck Quarles van Ufford"
+format: html
+---
+
+## Packages
+
+```{r}
+#| message: false
+#| label: libraries
+
+library("tidyverse")
+library("caret")
+```
+
+## Load data
+
+```{r}
+#| message: false
+#| label: load_data
+
+TCGA_exprs <- read_delim("../data/02_TCGA_exprs_clean.tsv")
+
+NS_exprs <- read_delim("../data/03_TCGA_NS_sim.tsv")
+
+cms_labels <- read_delim("../data/02_cms_labels_clean.tsv")
+```
+
+Reformat the expression data:
+
+```{r}
+#| label: reformat_data
+
+TCGA_exprs <- TCGA_exprs |> 
+  column_to_rownames("feature")
+
+NS_exprs <- NS_exprs |> 
+  column_to_rownames("feature")
+```
+
+## Classification using distance-to-centroid with leave-one-out cross validation
+
+### TCGA data
+
+```{r}
+#| label: DTC_TCGA
+
+pred_table <- data.frame(matrix(ncol = 3,
+                                nrow = 0))
+
+for(i in 1:ncol(TCGA_exprs)) {
+  train_exprs <- TCGA_exprs[-i]
+  train_CMS <- cms_labels[-i,]$cms
+  test_exprs <- TCGA_exprs[i]
+  test_CMS <- cms_labels[i,]$cms
+  
+  centroids <- NULL
+  for (class in unique(train_CMS)) {
+    class_centroid <- rowMeans(train_exprs[,train_CMS==class])
+    centroids <- cbind(centroids, class_centroid)
+  }
+  colnames(centroids) <- unique(train_CMS)
+  d <- as.matrix(dist(t(cbind(centroids, test_exprs))))
+  CMS_pred <- names(which.min(d[1:5, 6]))
+  
+  pred_table <- rbind(pred_table, c(test_CMS, CMS_pred, test_CMS==CMS_pred))
+}
+
+colnames(pred_table) <- c("CMS_true", "CMS_pred", "pred_correct")
+
+table(pred_table$pred_correct)
+
+confusionMatrix(data = factor(pred_table$CMS_pred), 
+                reference = factor(pred_table$CMS_true))
+```
+
+### NanoString data
+
+```{r}
+#| label: DTC_NS
+
+pred_table <- data.frame(matrix(ncol = 3,
+                                nrow = 0))
+
+for(i in 1:ncol(NS_exprs)) {
+  train_exprs <- NS_exprs[-i]
+  train_CMS <- cms_labels[-i,]$cms
+  test_exprs <- NS_exprs[i]
+  test_CMS <- cms_labels[i,]$cms
+  
+  centroids <- NULL
+  for (class in unique(train_CMS)) {
+    class_centroid <- rowMeans(train_exprs[,train_CMS==class])
+    centroids <- cbind(centroids, class_centroid)
+  }
+  colnames(centroids) <- unique(train_CMS)
+  d <- as.matrix(dist(t(cbind(centroids, test_exprs))))
+  CMS_pred <- names(which.min(d[1:5, 6]))
+  
+  pred_table <- rbind(pred_table, c(test_CMS, CMS_pred, test_CMS==CMS_pred))
+}
+
+colnames(pred_table) <- c("CMS_true", "CMS_pred", "pred_correct")
+
+table(pred_table$pred_correct)
+
+confusionMatrix(data = factor(pred_table$CMS_pred), 
+                reference = factor(pred_table$CMS_true))
+```
