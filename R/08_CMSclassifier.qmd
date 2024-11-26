@@ -1,0 +1,131 @@
+---
+title: "08_CMSclassifier"
+author: "Puck Quarles van Ufford"
+format: html
+---
+
+## Packages
+
+```{r}
+#| message: false
+#| label: libraries
+
+library("tidyverse")
+library("CMSclassifier")
+library("caret")
+```
+
+## Load data
+
+```{r}
+#| message: false
+#| label: load_data
+
+TCGA_exprs <- read_delim("../data/04_TCGA_mapped.tsv")
+
+NS_exprs <- read_delim("../data/04_NS_mapped.tsv")
+
+cms_labels <- read_delim("../data/02_cms_labels_clean.tsv")
+```
+
+Reformat the expression data:
+
+```{r}
+#| label: reformat_data
+
+TCGA_exprs <- TCGA_exprs |> 
+  column_to_rownames("entrez")
+
+NS_exprs <- NS_exprs |> 
+  column_to_rownames("entrez")
+```
+
+## Classification using distance-to-centroid with leave-one-out cross validation
+
+### TCGA data
+
+```{r}
+#| label: CMSclassifier_RF_TCGA
+
+CMS_pred <- classifyCMS(Exp = TCGA_exprs,
+                        method = "RF")
+
+CMS_pred_table <- CMS_pred |>
+  pluck("RF.details") |>
+  rownames_to_column("sample") |> 
+  mutate(
+    RF.predictedCMS = ifelse(is.na(RF.predictedCMS), "NOLBL", RF.predictedCMS),
+    CMS_label = cms_labels$cms,
+    pred_correct = CMS_label == RF.predictedCMS
+  )
+
+table(CMS_pred_table$pred_correct)
+
+confusionMatrix(data = factor(CMS_pred_table$RF.predictedCMS), 
+                reference = factor(CMS_pred_table$CMS_label))
+```
+
+```{r}
+#| label: CMSclassifier_SSP_TCGA
+
+CMS_pred <- classifyCMS(Exp = TCGA_exprs,
+                        method = "SSP")
+
+CMS_pred_table <- CMS_pred |>
+  pluck("SSP.details") |>
+  rownames_to_column("sample") |> 
+  mutate(
+    SSP.predictedCMS = ifelse(is.na(SSP.predictedCMS), "NOLBL", SSP.predictedCMS),
+    CMS_label = cms_labels$cms,
+    pred_correct = CMS_label == SSP.predictedCMS
+  )
+
+table(CMS_pred_table$pred_correct)
+
+confusionMatrix(data = factor(CMS_pred_table$SSP.predictedCMS), 
+                reference = factor(CMS_pred_table$CMS_label))
+```
+
+### NanoString data
+
+```{r}
+#| label: CMSclassifier_RF_NS
+
+CMS_pred <- classifyCMS(Exp = NS_exprs,
+                        method = "RF")
+
+CMS_pred_table <- CMS_pred |>
+  pluck("RF.details") |>
+  rownames_to_column("sample") |> 
+  mutate(
+    RF.predictedCMS = ifelse(is.na(RF.predictedCMS), "NOLBL", RF.predictedCMS),
+    CMS_label = cms_labels$cms,
+    pred_correct = CMS_label == RF.predictedCMS
+  )
+
+table(CMS_pred_table$pred_correct)
+
+confusionMatrix(data = factor(CMS_pred_table$RF.predictedCMS), 
+                reference = factor(CMS_pred_table$CMS_label))
+```
+
+```{r}
+#| label: CMSclassifier_SSP_NS
+
+CMS_pred <- classifyCMS(Exp = NS_exprs,
+                        method = "SSP")
+
+CMS_pred_table <- CMS_pred |>
+  pluck("SSP.details") |>
+  rownames_to_column("sample") |> 
+  mutate(
+    SSP.predictedCMS = ifelse(is.na(SSP.predictedCMS), "NOLBL", SSP.predictedCMS),
+    CMS_label = cms_labels$cms,
+    pred_correct = CMS_label == SSP.predictedCMS
+  )
+
+table(CMS_pred_table$pred_correct)
+
+confusionMatrix(data = factor(CMS_pred_table$SSP.predictedCMS), 
+                reference = factor(CMS_pred_table$CMS_label))
+```
