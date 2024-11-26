@@ -1,0 +1,273 @@
+---
+title: "07_kNN"
+author: "Puck Quarles van Ufford"
+format: html
+---
+
+```{r}
+#| label: seed
+
+set.seed(8)
+```
+
+## Packages
+
+```{r}
+#| message: false
+#| label: libraries
+
+library("tidyverse")
+library("class")
+library("caret")
+```
+
+## Load data
+
+```{r}
+#| message: false
+#| label: load_data
+
+TCGA_exprs <- read_delim("../data/02_TCGA_exprs_clean.tsv")
+
+NS_exprs <- read_delim("../data/03_TCGA_NS_sim.tsv")
+
+cms_labels <- read_delim("../data/02_cms_labels_clean.tsv")
+```
+
+Reformat the expression data:
+
+```{r}
+#| label: reformat_data
+
+TCGA_exprs <- TCGA_exprs |> 
+  column_to_rownames("feature")
+
+NS_exprs <- NS_exprs |> 
+  column_to_rownames("feature")
+```
+
+## Classification using k nearest neighbors with leave-one-out cross validation
+
+### TCGA data
+
+```{r}
+#| label: kNN_TCGA_k3
+
+k <- 3
+
+knn_pred <- c()
+for(i in 1:ncol(TCGA_exprs)) {
+  knn_pred <- c(knn_pred, as.vector(knn(train = t(TCGA_exprs[,-i]), test = t(TCGA_exprs[,i]), cl = as.factor(cms_labels$cms[-i]), k = k)))
+}
+
+pred_table <- knn_pred |> 
+  as_tibble() |> 
+  rename(CMS_pred = value) |> 
+  mutate(CMS_true = cms_labels$cms,
+         pred_correct = CMS_pred == CMS_true)
+
+table(pred_table$pred_correct)
+
+confusionMatrix(data = factor(pred_table$CMS_pred), 
+                reference = factor(pred_table$CMS_true))
+```
+
+```{r}
+#| label: kNN_TCGA_k5
+
+k <- 5
+
+knn_pred <- c()
+for(i in 1:ncol(TCGA_exprs)) {
+  knn_pred <- c(knn_pred, as.vector(knn(train = t(TCGA_exprs[,-i]), test = t(TCGA_exprs[,i]), cl = as.factor(cms_labels$cms[-i]), k = k)))
+}
+
+pred_table <- knn_pred |> 
+  as_tibble() |> 
+  rename(CMS_pred = value) |> 
+  mutate(CMS_true = cms_labels$cms,
+         pred_correct = CMS_pred == CMS_true)
+
+table(pred_table$pred_correct)
+
+confusionMatrix(data = factor(pred_table$CMS_pred), 
+                reference = factor(pred_table$CMS_true))
+```
+
+```{r}
+#| label: kNN_TCGA_k7
+
+k <- 7
+
+knn_pred <- c()
+for(i in 1:ncol(TCGA_exprs)) {
+  knn_pred <- c(knn_pred, as.vector(knn(train = t(TCGA_exprs[,-i]), test = t(TCGA_exprs[,i]), cl = as.factor(cms_labels$cms[-i]), k = k)))
+}
+
+pred_table <- knn_pred |> 
+  as_tibble() |> 
+  rename(CMS_pred = value) |> 
+  mutate(CMS_true = cms_labels$cms,
+         pred_correct = CMS_pred == CMS_true)
+
+table(pred_table$pred_correct)
+
+confusionMatrix(data = factor(pred_table$CMS_pred), 
+                reference = factor(pred_table$CMS_true))
+```
+
+```{r}
+#| label: kNN_TCGA_k9
+
+k <- 9
+
+knn_pred <- c()
+for(i in 1:ncol(TCGA_exprs)) {
+  knn_pred <- c(knn_pred, as.vector(knn(train = t(TCGA_exprs[,-i]), test = t(TCGA_exprs[,i]), cl = as.factor(cms_labels$cms[-i]), k = k)))
+}
+
+pred_table <- knn_pred |> 
+  as_tibble() |> 
+  rename(CMS_pred = value) |> 
+  mutate(CMS_true = cms_labels$cms,
+         pred_correct = CMS_pred == CMS_true)
+
+table(pred_table$pred_correct)
+
+confusionMatrix(data = factor(pred_table$CMS_pred), 
+                reference = factor(pred_table$CMS_true))
+```
+
+```{r}
+#| label: kNN_TCGA_k11
+
+k <- 11
+
+knn_pred <- c()
+for(i in 1:ncol(TCGA_exprs)) {
+  knn_pred <- c(knn_pred, as.vector(knn(train = t(TCGA_exprs[,-i]), test = t(TCGA_exprs[,i]), cl = as.factor(cms_labels$cms[-i]), k = k)))
+}
+
+pred_table <- knn_pred |> 
+  as_tibble() |> 
+  rename(CMS_pred = value) |> 
+  mutate(CMS_true = cms_labels$cms,
+         pred_correct = CMS_pred == CMS_true)
+
+table(pred_table$pred_correct)
+
+confusionMatrix(data = factor(pred_table$CMS_pred), 
+                reference = factor(pred_table$CMS_true))
+```
+
+### NanoString data
+
+```{r}
+#| label: kNN_NS_k3
+
+k <- 3
+
+knn_pred <- c()
+for(i in 1:ncol(NS_exprs)) {
+  knn_pred <- c(knn_pred, as.vector(knn(train = t(NS_exprs[,-i]), test = t(NS_exprs[,i]), cl = as.factor(cms_labels$cms[-i]), k = k)))
+}
+
+pred_table <- knn_pred |> 
+  as_tibble() |> 
+  rename(CMS_pred = value) |> 
+  mutate(CMS_true = cms_labels$cms,
+         pred_correct = CMS_pred == CMS_true)
+
+table(pred_table$pred_correct)
+
+confusionMatrix(data = factor(pred_table$CMS_pred), 
+                reference = factor(pred_table$CMS_true))
+```
+
+```{r}
+#| label: kNN_NS_k5
+
+k <- 5
+
+knn_pred <- c()
+for(i in 1:ncol(NS_exprs)) {
+  knn_pred <- c(knn_pred, as.vector(knn(train = t(NS_exprs[,-i]), test = t(NS_exprs[,i]), cl = as.factor(cms_labels$cms[-i]), k = k)))
+}
+
+pred_table <- knn_pred |> 
+  as_tibble() |> 
+  rename(CMS_pred = value) |> 
+  mutate(CMS_true = cms_labels$cms,
+         pred_correct = CMS_pred == CMS_true)
+
+table(pred_table$pred_correct)
+
+confusionMatrix(data = factor(pred_table$CMS_pred), 
+                reference = factor(pred_table$CMS_true))
+```
+
+```{r}
+#| label: kNN_NS_k7
+
+k <- 7
+
+knn_pred <- c()
+for(i in 1:ncol(NS_exprs)) {
+  knn_pred <- c(knn_pred, as.vector(knn(train = t(NS_exprs[,-i]), test = t(NS_exprs[,i]), cl = as.factor(cms_labels$cms[-i]), k = k)))
+}
+
+pred_table <- knn_pred |> 
+  as_tibble() |> 
+  rename(CMS_pred = value) |> 
+  mutate(CMS_true = cms_labels$cms,
+         pred_correct = CMS_pred == CMS_true)
+
+table(pred_table$pred_correct)
+
+confusionMatrix(data = factor(pred_table$CMS_pred), 
+                reference = factor(pred_table$CMS_true))
+```
+
+```{r}
+#| label: kNN_NS_k9
+
+k <- 9
+
+knn_pred <- c()
+for(i in 1:ncol(NS_exprs)) {
+  knn_pred <- c(knn_pred, as.vector(knn(train = t(NS_exprs[,-i]), test = t(NS_exprs[,i]), cl = as.factor(cms_labels$cms[-i]), k = k)))
+}
+
+pred_table <- knn_pred |> 
+  as_tibble() |> 
+  rename(CMS_pred = value) |> 
+  mutate(CMS_true = cms_labels$cms,
+         pred_correct = CMS_pred == CMS_true)
+
+table(pred_table$pred_correct)
+
+confusionMatrix(data = factor(pred_table$CMS_pred), 
+                reference = factor(pred_table$CMS_true))
+```
+
+```{r}
+#| label: kNN_NS_k11
+
+k <- 11
+
+knn_pred <- c()
+for(i in 1:ncol(NS_exprs)) {
+  knn_pred <- c(knn_pred, as.vector(knn(train = t(NS_exprs[,-i]), test = t(NS_exprs[,i]), cl = as.factor(cms_labels$cms[-i]), k = k)))
+}
+
+pred_table <- knn_pred |> 
+  as_tibble() |> 
+  rename(CMS_pred = value) |> 
+  mutate(CMS_true = cms_labels$cms,
+         pred_correct = CMS_pred == CMS_true)
+
+table(pred_table$pred_correct)
+
+confusionMatrix(data = factor(pred_table$CMS_pred), 
+                reference = factor(pred_table$CMS_true))
+```
