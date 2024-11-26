@@ -1,5 +1,5 @@
 ---
-title: "08_CMSclassifier"
+title: "Classification with the CMSclassifier package"
 author: "Puck Quarles van Ufford"
 format: html
 ---
@@ -40,9 +40,11 @@ NS_exprs <- NS_exprs |>
   column_to_rownames("entrez")
 ```
 
-## Classification using distance-to-centroid with leave-one-out cross validation
+## Classification using the CMSclassifier package
 
 ### TCGA data
+
+Using the random forest predictor:
 
 ```{r}
 #| label: CMSclassifier_RF_TCGA
@@ -64,6 +66,8 @@ table(CMS_pred_table$pred_correct)
 confusionMatrix(data = factor(CMS_pred_table$RF.predictedCMS), 
                 reference = factor(CMS_pred_table$CMS_label))
 ```
+
+Using the single sample predictor: 
 
 ```{r}
 #| label: CMSclassifier_SSP_TCGA
@@ -88,6 +92,8 @@ confusionMatrix(data = factor(CMS_pred_table$SSP.predictedCMS),
 
 ### NanoString data
 
+Using the random forest predictor:
+
 ```{r}
 #| label: CMSclassifier_RF_NS
 
@@ -108,6 +114,8 @@ table(CMS_pred_table$pred_correct)
 confusionMatrix(data = factor(CMS_pred_table$RF.predictedCMS), 
                 reference = factor(CMS_pred_table$CMS_label))
 ```
+
+Using the single sample predictor:
 
 ```{r}
 #| label: CMSclassifier_SSP_NS

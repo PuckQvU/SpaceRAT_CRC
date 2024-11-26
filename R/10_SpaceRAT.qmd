@@ -1,5 +1,5 @@
 ---
-title: "10_SpaceRAT"
+title: "Building and testing SpaceRAT scaffolds for colorectal cancer consensus molecular subtypes"
 author: "Puck Quarles van Ufford"
 format: html
 ---
@@ -50,10 +50,11 @@ cms_labels <- cms_labels |>
 
 ## Split data
 
-We use 90% of the data to build the scaffold and the remaining 10% to project into the scaffold for testing.
+We used 90% of the data to build the scaffold and the remaining 10% to project into the scaffold for testing.
 
 ```{r}
 #| label: split_data
+#| warning: false
 
 samples <- rownames(cms_labels)
 
@@ -80,33 +81,37 @@ cms_labels_test <- cms_labels |>
 
 ### TCGA data
 
-Build the scaffold.
+Build the scaffold:
 
 ```{r}
 #| label: build_TCGA_scafffold
 #| message: false
+#| warning: false
 
 TCGA_scaffold <- buildScaffold(
   object = TCGA_train,
   pheno = cms_labels_train,
   colname = "cms",
   data = "exprs",
-  annotation = NULL
+  annotation = "entrez"
 )
 ```
 
-Plot scaffold in PCA space.
+Plot the scaffold in PCA space:
 
 ```{r}
 #| label: plot_TCGA_scafffold
+#| message: false
 
 plotScaffold(
   scaffold = TCGA_scaffold, 
-  title = "CRC scaffold using TCGA data",
+  title = "CRC Scaffold built with RNA-seq data",
   dimred = "PCA", 
   dims = c(1,2), 
   plot_mode = "dot"
 )
+
+ggsave("../results/10_TCGA_scaffold.png")
 ```
 
 Test the scaffold:
@@ -120,40 +125,46 @@ projectSample(
   sample = TCGA_test,
   pheno = cms_labels_test,
   colname = "cms",
-  title = "CRC Scaffold built with TCGA data",
+  title = "CRC Scaffold built with RNA-seq data",
   annotation = NULL
 )
+
+ggsave("../results/10_TCGA_projections.png")
 ```
 
 ### NanoString data
 
-Build the scaffold.
+Build the scaffold:
 
 ```{r}
 #| label: build_NS_scafffold
 #| message: false
+#| warning: false
 
 NS_scaffold <- buildScaffold(
   object = NS_train,
   pheno = cms_labels_train,
   colname = "cms",
   data = "exprs",
-  annotation = NULL
+  annotation = "entrez"
 )
 ```
 
-Plot scaffold in PCA space.
+Plot the  scaffold in PCA space:
 
 ```{r}
 #| label: plot_NS_scafffold
+#| message: false
 
 plotScaffold(
   scaffold = NS_scaffold, 
-  title = "CRC scaffold using NS data",
+  title = "CRC Scaffold built with simulated NanoString nCounter data",
   dimred = "PCA", 
   dims = c(1,2), 
   plot_mode = "dot"
 )
+
+ggsave("../results/10_NS_scaffold.png")
 ```
 
 Test the scaffold:
@@ -167,7 +178,9 @@ projectSample(
   sample = NS_test,
   pheno = cms_labels_test,
   colname = "cms",
-  title = "CRC Scaffold built with NS data",
+  title = "CRC Scaffold built with simulated NanoString nCounter data",
   annotation = NULL
 )
+
+ggsave("../results/10_NS_projections.png")
 ```

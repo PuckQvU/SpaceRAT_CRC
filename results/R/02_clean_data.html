@@ -8,7 +8,7 @@
 
 <meta name="author" content="Puck Quarles van Ufford">
 
-<title>02_clean_data</title>
+<title>Cleaning the data</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3076,11 +3076,12 @@ vertical-align: -.125em;
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#load-data" id="toc-load-data" class="nav-link active" data-scroll-target="#load-data"><span class="header-section-number">1</span> Load data</a></li>
-  <li><a href="#clean-expression-data" id="toc-clean-expression-data" class="nav-link" data-scroll-target="#clean-expression-data"><span class="header-section-number">2</span> Clean expression data</a></li>
-  <li><a href="#clean-cms-labels" id="toc-clean-cms-labels" class="nav-link" data-scroll-target="#clean-cms-labels"><span class="header-section-number">3</span> Clean CMS labels</a></li>
-  <li><a href="#match-expression-data-and-cms-labels" id="toc-match-expression-data-and-cms-labels" class="nav-link" data-scroll-target="#match-expression-data-and-cms-labels"><span class="header-section-number">4</span> Match expression data and CMS labels</a></li>
-  <li><a href="#save-data" id="toc-save-data" class="nav-link" data-scroll-target="#save-data"><span class="header-section-number">5</span> Save data</a></li>
+  <li><a href="#packages" id="toc-packages" class="nav-link active" data-scroll-target="#packages"><span class="header-section-number">1</span> Packages</a></li>
+  <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data"><span class="header-section-number">2</span> Load data</a></li>
+  <li><a href="#clean-expression-data" id="toc-clean-expression-data" class="nav-link" data-scroll-target="#clean-expression-data"><span class="header-section-number">3</span> Clean expression data</a></li>
+  <li><a href="#clean-cms-labels" id="toc-clean-cms-labels" class="nav-link" data-scroll-target="#clean-cms-labels"><span class="header-section-number">4</span> Clean CMS labels</a></li>
+  <li><a href="#match-expression-data-and-cms-labels" id="toc-match-expression-data-and-cms-labels" class="nav-link" data-scroll-target="#match-expression-data-and-cms-labels"><span class="header-section-number">5</span> Match expression data and CMS labels</a></li>
+  <li><a href="#save-data" id="toc-save-data" class="nav-link" data-scroll-target="#save-data"><span class="header-section-number">6</span> Save data</a></li>
   </ul>
 </nav>
 </div>
@@ -3088,7 +3089,7 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">02_clean_data</h1>
+<h1 class="title">Cleaning the data</h1>
 </div>
 
 
@@ -3111,19 +3112,22 @@ vertical-align: -.125em;
 </header>
 
 
+<section id="packages" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="packages"><span class="header-section-number">1</span> Packages</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="load-data" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="load-data"><span class="header-section-number">1</span> Load data</h2>
+</section>
+<section id="load-data" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="load-data"><span class="header-section-number">2</span> Load data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>TCGA_exprs <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">&quot;../data/01_TCGA_exprs.tsv&quot;</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>cms_labels <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">&quot;../data/01_cms_labels.tsv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="clean-expression-data" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="clean-expression-data"><span class="header-section-number">2</span> Clean expression data</h2>
+<section id="clean-expression-data" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="clean-expression-data"><span class="header-section-number">3</span> Clean expression data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(TCGA_exprs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -3145,10 +3149,10 @@ vertical-align: -.125em;
 #   `TCGA-AA-3666` &lt;dbl&gt;, `TCGA-AA-3976` &lt;dbl&gt;, `TCGA-AA-3819` &lt;dbl&gt;, …</code></pre>
 </div>
 </div>
-<p>No further cleaning necessary.</p>
+<p>This data does not require additional cleaning steps.</p>
 </section>
-<section id="clean-cms-labels" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="clean-cms-labels"><span class="header-section-number">3</span> Clean CMS labels</h2>
+<section id="clean-cms-labels" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="clean-cms-labels"><span class="header-section-number">4</span> Clean CMS labels</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cms_labels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -3165,10 +3169,10 @@ vertical-align: -.125em;
 #   ¹​CMS_final_network_plus_RFclassifier_in_nonconsensus_samples</code></pre>
 </div>
 </div>
-<p>Cleaning steps:</p>
+<p>Cleaning steps required:</p>
 <ol type="1">
 <li>Filter for TCGA data only</li>
-<li>Select and rename relevant columns</li>
+<li>Select and rename the relevant columns</li>
 </ol>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cms_labels <span class="ot">&lt;-</span> cms_labels <span class="sc">|&gt;</span> </span>
@@ -3177,8 +3181,8 @@ vertical-align: -.125em;
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">cms =</span> CMS_final_network_plus_RFclassifier_in_nonconsensus_samples))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="match-expression-data-and-cms-labels" class="level2" data-number="4">
-<h2 data-number="4" class="anchored" data-anchor-id="match-expression-data-and-cms-labels"><span class="header-section-number">4</span> Match expression data and CMS labels</h2>
+<section id="match-expression-data-and-cms-labels" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="match-expression-data-and-cms-labels"><span class="header-section-number">5</span> Match expression data and CMS labels</h2>
 <p>Ensure that the expression data and CMS labels contain the same samples in the same order.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">setdiff</span>(<span class="fu">colnames</span>(TCGA_exprs), <span class="st">&quot;feature&quot;</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -3205,8 +3209,8 @@ vertical-align: -.125em;
 </div>
 </div>
 </section>
-<section id="save-data" class="level2" data-number="5">
-<h2 data-number="5" class="anchored" data-anchor-id="save-data"><span class="header-section-number">5</span> Save data</h2>
+<section id="save-data" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="save-data"><span class="header-section-number">6</span> Save data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(TCGA_exprs,</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">file =</span> <span class="st">&quot;../data/02_TCGA_exprs_clean.tsv&quot;</span>)</span>

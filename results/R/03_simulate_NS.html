@@ -8,7 +8,7 @@
 
 <meta name="author" content="Puck Quarles van Ufford">
 
-<title>03_simulate_NS</title>
+<title>Simulating NanoString nCoutner data</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3076,10 +3076,11 @@ vertical-align: -.125em;
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#load-data" id="toc-load-data" class="nav-link active" data-scroll-target="#load-data"><span class="header-section-number">1</span> Load data</a></li>
-  <li><a href="#list-genes-in-nanostring-panel" id="toc-list-genes-in-nanostring-panel" class="nav-link" data-scroll-target="#list-genes-in-nanostring-panel"><span class="header-section-number">2</span> List genes in NanoString Panel</a></li>
-  <li><a href="#subset-the-expression-data" id="toc-subset-the-expression-data" class="nav-link" data-scroll-target="#subset-the-expression-data"><span class="header-section-number">3</span> Subset the expression data</a></li>
-  <li><a href="#save-data" id="toc-save-data" class="nav-link" data-scroll-target="#save-data"><span class="header-section-number">4</span> Save data</a></li>
+  <li><a href="#packages" id="toc-packages" class="nav-link active" data-scroll-target="#packages"><span class="header-section-number">1</span> Packages</a></li>
+  <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data"><span class="header-section-number">2</span> Load data</a></li>
+  <li><a href="#list-genes-in-nanostring-panel" id="toc-list-genes-in-nanostring-panel" class="nav-link" data-scroll-target="#list-genes-in-nanostring-panel"><span class="header-section-number">3</span> List genes in NanoString Panel</a></li>
+  <li><a href="#subset-the-expression-data" id="toc-subset-the-expression-data" class="nav-link" data-scroll-target="#subset-the-expression-data"><span class="header-section-number">4</span> Subset the expression data</a></li>
+  <li><a href="#save-data" id="toc-save-data" class="nav-link" data-scroll-target="#save-data"><span class="header-section-number">5</span> Save data</a></li>
   </ul>
 </nav>
 </div>
@@ -3087,7 +3088,7 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">03_simulate_NS</h1>
+<h1 class="title">Simulating NanoString nCoutner data</h1>
 </div>
 
 
@@ -3110,17 +3111,20 @@ vertical-align: -.125em;
 </header>
 
 
+<section id="packages" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="packages"><span class="header-section-number">1</span> Packages</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="load-data" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="load-data"><span class="header-section-number">1</span> Load data</h2>
+</section>
+<section id="load-data" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="load-data"><span class="header-section-number">2</span> Load data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>TCGA_exprs <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">&quot;../data/02_TCGA_exprs_clean.tsv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="list-genes-in-nanostring-panel" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="list-genes-in-nanostring-panel"><span class="header-section-number">2</span> List genes in NanoString Panel</h2>
+<section id="list-genes-in-nanostring-panel" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="list-genes-in-nanostring-panel"><span class="header-section-number">3</span> List genes in NanoString Panel</h2>
 <p>For the purposes of this experiment, we have listed the 770 genes in the NanoString IO360 PanCancer gene panel.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>genes <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
@@ -3280,16 +3284,16 @@ vertical-align: -.125em;
 <span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;XCL1/2&quot;</span>, <span class="st">&quot;ZAP70&quot;</span>, <span class="st">&quot;ZC3H12A&quot;</span>, <span class="st">&quot;ZEB1&quot;</span>, <span class="st">&quot;ZEB2&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="subset-the-expression-data" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="subset-the-expression-data"><span class="header-section-number">3</span> Subset the expression data</h2>
+<section id="subset-the-expression-data" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="subset-the-expression-data"><span class="header-section-number">4</span> Subset the expression data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>TCGA_NS_subset <span class="ot">&lt;-</span> TCGA_exprs <span class="sc">|&gt;</span> </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">subset</span>(feature <span class="sc">%in%</span> genes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Not every gene in the list has an exact match in the TCGA expression dataset, but for the purposes of this experiment, this is a fine simulation of NanoString data.</p>
 </section>
-<section id="save-data" class="level2" data-number="4">
-<h2 data-number="4" class="anchored" data-anchor-id="save-data"><span class="header-section-number">4</span> Save data</h2>
+<section id="save-data" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="save-data"><span class="header-section-number">5</span> Save data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(TCGA_NS_subset,</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">file =</span> <span class="st">&quot;../data/03_TCGA_NS_sim.tsv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

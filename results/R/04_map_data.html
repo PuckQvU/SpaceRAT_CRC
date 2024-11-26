@@ -8,7 +8,7 @@
 
 <meta name="author" content="Puck Quarles van Ufford">
 
-<title>04_map_data</title>
+<title>Mapping the data to Entrez IDs</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3076,9 +3076,10 @@ vertical-align: -.125em;
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#load-data" id="toc-load-data" class="nav-link active" data-scroll-target="#load-data"><span class="header-section-number">1</span> Load data</a></li>
-  <li><a href="#map-expression-data-to-entrez-id" id="toc-map-expression-data-to-entrez-id" class="nav-link" data-scroll-target="#map-expression-data-to-entrez-id"><span class="header-section-number">2</span> Map expression data to Entrez ID</a></li>
-  <li><a href="#save-data" id="toc-save-data" class="nav-link" data-scroll-target="#save-data"><span class="header-section-number">3</span> Save data</a></li>
+  <li><a href="#packages" id="toc-packages" class="nav-link active" data-scroll-target="#packages"><span class="header-section-number">1</span> Packages</a></li>
+  <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data"><span class="header-section-number">2</span> Load data</a></li>
+  <li><a href="#map-expression-data-to-entrez-id" id="toc-map-expression-data-to-entrez-id" class="nav-link" data-scroll-target="#map-expression-data-to-entrez-id"><span class="header-section-number">3</span> Map expression data to Entrez ID</a></li>
+  <li><a href="#save-data" id="toc-save-data" class="nav-link" data-scroll-target="#save-data"><span class="header-section-number">4</span> Save data</a></li>
   </ul>
 </nav>
 </div>
@@ -3086,7 +3087,7 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">04_map_data</h1>
+<h1 class="title">Mapping the data to Entrez IDs</h1>
 </div>
 
 
@@ -3109,21 +3110,24 @@ vertical-align: -.125em;
 </header>
 
 
+<section id="packages" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="packages"><span class="header-section-number">1</span> Packages</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;org.Hs.eg.db&quot;</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;AnnotationDbi&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="load-data" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="load-data"><span class="header-section-number">1</span> Load data</h2>
+</section>
+<section id="load-data" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="load-data"><span class="header-section-number">2</span> Load data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>TCGA_exprs <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">&quot;../data/02_TCGA_exprs_clean.tsv&quot;</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>NS_exprs <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">&quot;../data/03_TCGA_NS_sim.tsv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="map-expression-data-to-entrez-id" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="map-expression-data-to-entrez-id"><span class="header-section-number">2</span> Map expression data to Entrez ID</h2>
+<section id="map-expression-data-to-entrez-id" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="map-expression-data-to-entrez-id"><span class="header-section-number">3</span> Map expression data to Entrez ID</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>TCGA_exprs_mapped <span class="ot">&lt;-</span> TCGA_exprs <span class="sc">|&gt;</span> </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">entrez =</span> <span class="fu">mapIds</span>(org.Hs.eg.db, </span>
@@ -3145,8 +3149,8 @@ vertical-align: -.125em;
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(entrez)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="save-data" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="save-data"><span class="header-section-number">3</span> Save data</h2>
+<section id="save-data" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="save-data"><span class="header-section-number">4</span> Save data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(TCGA_exprs_mapped,</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">file =</span> <span class="st">&quot;../data/04_TCGA_mapped.tsv&quot;</span>)</span>

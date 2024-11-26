@@ -1,5 +1,5 @@
 ---
-title: "06_rDTC"
+title: "Classification with a ranked distance-to-centroid model"
 author: "Puck Quarles van Ufford"
 format: html
 ---

@@ -8,7 +8,7 @@
 
 <meta name="author" content="Puck Quarles van Ufford">
 
-<title>01_load_data</title>
+<title>Loading the data</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3076,9 +3076,10 @@ vertical-align: -.125em;
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#download-files" id="toc-download-files" class="nav-link active" data-scroll-target="#download-files"><span class="header-section-number">1</span> Download files</a></li>
-  <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data"><span class="header-section-number">2</span> Load data</a></li>
-  <li><a href="#save-data" id="toc-save-data" class="nav-link" data-scroll-target="#save-data"><span class="header-section-number">3</span> Save data</a></li>
+  <li><a href="#packages" id="toc-packages" class="nav-link active" data-scroll-target="#packages"><span class="header-section-number">1</span> Packages</a></li>
+  <li><a href="#instructions-for-downloading-the-files" id="toc-instructions-for-downloading-the-files" class="nav-link" data-scroll-target="#instructions-for-downloading-the-files"><span class="header-section-number">2</span> Instructions for downloading the files</a></li>
+  <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data"><span class="header-section-number">3</span> Load data</a></li>
+  <li><a href="#save-data" id="toc-save-data" class="nav-link" data-scroll-target="#save-data"><span class="header-section-number">4</span> Save data</a></li>
   </ul>
 </nav>
 </div>
@@ -3086,7 +3087,7 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">01_load_data</h1>
+<h1 class="title">Loading the data</h1>
 </div>
 
 
@@ -3109,28 +3110,31 @@ vertical-align: -.125em;
 </header>
 
 
+<section id="packages" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="packages"><span class="header-section-number">1</span> Packages</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;tidyverse&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="download-files" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="download-files"><span class="header-section-number">1</span> Download files</h2>
+</section>
+<section id="instructions-for-downloading-the-files" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="instructions-for-downloading-the-files"><span class="header-section-number">2</span> Instructions for downloading the files</h2>
 <p>Download the following files from the Colorectal Cancer Subtyping Consortium (CRCSC) <a href="https://www.synapse.org/Synapse:syn2623706/files/">Synapse page</a> (DOI: <a href="https://doi.org/10.7303/syn2623706">10.7303/syn2623706</a>):</p>
 <ol type="1">
 <li>TCGACRC_expression.tsv (<a href="https://www.synapse.org/Synapse:syn2161141">syn2161141</a>)</li>
 <li>cms_labels_public_all.txt (<a href="https://www.synapse.org/Synapse:syn4978511">syn4978511</a>)</li>
 </ol>
-<p>Place these files in the “../data/_raw” folder.</p>
+<p>Place these files in the <code>../data/_raw</code> folder.</p>
 </section>
-<section id="load-data" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="load-data"><span class="header-section-number">2</span> Load data</h2>
+<section id="load-data" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="load-data"><span class="header-section-number">3</span> Load data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>TCGA_exprs <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">&quot;../data/_raw/TCGACRC_expression.tsv&quot;</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>cms_labels <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">&quot;../data/_raw/cms_labels_public_all.txt&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="save-data" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="save-data"><span class="header-section-number">3</span> Save data</h2>
+<section id="save-data" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="save-data"><span class="header-section-number">4</span> Save data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_tsv</span>(TCGA_exprs,</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">file =</span> <span class="st">&quot;../data/01_TCGA_exprs.tsv&quot;</span>)</span>

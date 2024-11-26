@@ -1,8 +1,10 @@
 ---
-title: "03_simulate_NS"
+title: "Simulating NanoString nCoutner data"
 author: "Puck Quarles van Ufford"
 format: html
 ---
+
+## Packages
 
 ```{r}
 #| message: false

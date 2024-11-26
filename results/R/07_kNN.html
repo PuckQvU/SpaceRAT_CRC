@@ -8,7 +8,7 @@
 
 <meta name="author" content="Puck Quarles van Ufford">
 
-<title>07_kNN</title>
+<title>Classification with a k-nearest neighbors model</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3090,7 +3090,7 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">07_kNN</h1>
+<h1 class="title">Classification with a k-nearest neighbors model</h1>
 </div>
 
 
@@ -3146,6 +3146,7 @@ vertical-align: -.125em;
 <h2 data-number="3" class="anchored" data-anchor-id="classification-using-k-nearest-neighbors-with-leave-one-out-cross-validation"><span class="header-section-number">3</span> Classification using k nearest neighbors with leave-one-out cross validation</h2>
 <section id="tcga-data" class="level3" data-number="3.1">
 <h3 data-number="3.1" class="anchored" data-anchor-id="tcga-data"><span class="header-section-number">3.1</span> TCGA data</h3>
+<p>k = 3</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">3</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -3212,6 +3213,7 @@ Detection Prevalence      0.03422
 Balanced Accuracy         0.56480</code></pre>
 </div>
 </div>
+<p>k = 5</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">5</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -3278,6 +3280,7 @@ Detection Prevalence      0.02662
 Balanced Accuracy         0.55227</code></pre>
 </div>
 </div>
+<p>k = 7</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">7</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -3344,6 +3347,7 @@ Detection Prevalence      0.02662
 Balanced Accuracy         0.55227</code></pre>
 </div>
 </div>
+<p>k = 9</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">9</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -3410,6 +3414,7 @@ Detection Prevalence      0.01521
 Balanced Accuracy         0.54193</code></pre>
 </div>
 </div>
+<p>k = 11</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">11</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -3479,6 +3484,7 @@ Balanced Accuracy        0.527228</code></pre>
 </section>
 <section id="nanostring-data" class="level3" data-number="3.2">
 <h3 data-number="3.2" class="anchored" data-anchor-id="nanostring-data"><span class="header-section-number">3.2</span> NanoString data</h3>
+<p>k = 3</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">3</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -3545,6 +3551,7 @@ Detection Prevalence      0.03802
 Balanced Accuracy         0.54572</code></pre>
 </div>
 </div>
+<p>k = 5</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">5</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -3611,6 +3618,7 @@ Detection Prevalence     0.030418
 Balanced Accuracy        0.516311</code></pre>
 </div>
 </div>
+<p>k = 7</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">7</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -3677,6 +3685,7 @@ Detection Prevalence     0.007605
 Balanced Accuracy        0.512522</code></pre>
 </div>
 </div>
+<p>k = 9</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">9</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -3743,6 +3752,7 @@ Detection Prevalence     0.011407
 Balanced Accuracy        0.527228</code></pre>
 </div>
 </div>
+<p>k = 11</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">11</span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>

@@ -1,5 +1,5 @@
 ---
-title: "05_DTC"
+title: "Classification with a distance-to-centroid model"
 author: "Puck Quarles van Ufford"
 format: html
 ---

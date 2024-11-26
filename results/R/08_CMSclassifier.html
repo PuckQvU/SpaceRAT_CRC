@@ -8,7 +8,7 @@
 
 <meta name="author" content="Puck Quarles van Ufford">
 
-<title>08_CMSclassifier</title>
+<title>Classification with the CMSclassifier package</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3078,7 +3078,7 @@ vertical-align: -.125em;
   <ul>
   <li><a href="#packages" id="toc-packages" class="nav-link active" data-scroll-target="#packages"><span class="header-section-number">1</span> Packages</a></li>
   <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data"><span class="header-section-number">2</span> Load data</a></li>
-  <li><a href="#classification-using-distance-to-centroid-with-leave-one-out-cross-validation" id="toc-classification-using-distance-to-centroid-with-leave-one-out-cross-validation" class="nav-link" data-scroll-target="#classification-using-distance-to-centroid-with-leave-one-out-cross-validation"><span class="header-section-number">3</span> Classification using distance-to-centroid with leave-one-out cross validation</a>
+  <li><a href="#classification-using-the-cmsclassifier-package" id="toc-classification-using-the-cmsclassifier-package" class="nav-link" data-scroll-target="#classification-using-the-cmsclassifier-package"><span class="header-section-number">3</span> Classification using the CMSclassifier package</a>
   <ul class="collapse">
   <li><a href="#tcga-data" id="toc-tcga-data" class="nav-link" data-scroll-target="#tcga-data"><span class="header-section-number">3.1</span> TCGA data</a></li>
   <li><a href="#nanostring-data" id="toc-nanostring-data" class="nav-link" data-scroll-target="#nanostring-data"><span class="header-section-number">3.2</span> NanoString data</a></li>
@@ -3090,7 +3090,7 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">08_CMSclassifier</h1>
+<h1 class="title">Classification with the CMSclassifier package</h1>
 </div>
 
 
@@ -3139,10 +3139,11 @@ vertical-align: -.125em;
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_to_rownames</span>(<span class="st">&quot;entrez&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="classification-using-distance-to-centroid-with-leave-one-out-cross-validation" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="classification-using-distance-to-centroid-with-leave-one-out-cross-validation"><span class="header-section-number">3</span> Classification using distance-to-centroid with leave-one-out cross validation</h2>
+<section id="classification-using-the-cmsclassifier-package" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="classification-using-the-cmsclassifier-package"><span class="header-section-number">3</span> Classification using the CMSclassifier package</h2>
 <section id="tcga-data" class="level3" data-number="3.1">
 <h3 data-number="3.1" class="anchored" data-anchor-id="tcga-data"><span class="header-section-number">3.1</span> TCGA data</h3>
+<p>Using the random forest predictor:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>CMS_pred <span class="ot">&lt;-</span> <span class="fu">classifyCMS</span>(<span class="at">Exp =</span> TCGA_exprs,</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">method =</span> <span class="st">&quot;RF&quot;</span>)</span>
@@ -3208,6 +3209,7 @@ Detection Prevalence       0.2586
 Balanced Accuracy          0.8244</code></pre>
 </div>
 </div>
+<p>Using the single sample predictor:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>CMS_pred <span class="ot">&lt;-</span> <span class="fu">classifyCMS</span>(<span class="at">Exp =</span> TCGA_exprs,</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">method =</span> <span class="st">&quot;SSP&quot;</span>)</span>
@@ -3276,6 +3278,7 @@ Balanced Accuracy         0.55593</code></pre>
 </section>
 <section id="nanostring-data" class="level3" data-number="3.2">
 <h3 data-number="3.2" class="anchored" data-anchor-id="nanostring-data"><span class="header-section-number">3.2</span> NanoString data</h3>
+<p>Using the random forest predictor:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>CMS_pred <span class="ot">&lt;-</span> <span class="fu">classifyCMS</span>(<span class="at">Exp =</span> NS_exprs,</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">method =</span> <span class="st">&quot;RF&quot;</span>)</span>
@@ -3350,6 +3353,7 @@ Detection Prevalence      0.59316
 Balanced Accuracy         0.56473</code></pre>
 </div>
 </div>
+<p>Using the single sample predictor:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>CMS_pred <span class="ot">&lt;-</span> <span class="fu">classifyCMS</span>(<span class="at">Exp =</span> NS_exprs,</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">method =</span> <span class="st">&quot;SSP&quot;</span>)</span>

@@ -1,8 +1,10 @@
 ---
-title: "04_map_data"
+title: "Mapping the data to Entrez IDs"
 author: "Puck Quarles van Ufford"
 format: html
 ---
+
+## Packages
 
 ```{r}
 #| message: false

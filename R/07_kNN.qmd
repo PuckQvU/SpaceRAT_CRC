@@ -1,5 +1,5 @@
 ---
-title: "07_kNN"
+title: "Classification with a k-nearest neighbors model"
 author: "Puck Quarles van Ufford"
 format: html
 ---
@@ -50,6 +50,8 @@ NS_exprs <- NS_exprs |>
 
 ### TCGA data
 
+k = 3
+
 ```{r}
 #| label: kNN_TCGA_k3
 
@@ -71,6 +73,8 @@ table(pred_table$pred_correct)
 confusionMatrix(data = factor(pred_table$CMS_pred), 
                 reference = factor(pred_table$CMS_true))
 ```
+
+k = 5
 
 ```{r}
 #| label: kNN_TCGA_k5
@@ -94,6 +98,8 @@ confusionMatrix(data = factor(pred_table$CMS_pred),
                 reference = factor(pred_table$CMS_true))
 ```
 
+k = 7
+
 ```{r}
 #| label: kNN_TCGA_k7
 
@@ -116,6 +122,8 @@ confusionMatrix(data = factor(pred_table$CMS_pred),
                 reference = factor(pred_table$CMS_true))
 ```
 
+k = 9
+
 ```{r}
 #| label: kNN_TCGA_k9
 
@@ -137,6 +145,8 @@ table(pred_table$pred_correct)
 confusionMatrix(data = factor(pred_table$CMS_pred), 
                 reference = factor(pred_table$CMS_true))
 ```
+
+k = 11
 
 ```{r}
 #| label: kNN_TCGA_k11
@@ -162,6 +172,8 @@ confusionMatrix(data = factor(pred_table$CMS_pred),
 
 ### NanoString data
 
+k = 3
+
 ```{r}
 #| label: kNN_NS_k3
 
@@ -183,6 +195,8 @@ table(pred_table$pred_correct)
 confusionMatrix(data = factor(pred_table$CMS_pred), 
                 reference = factor(pred_table$CMS_true))
 ```
+
+k = 5
 
 ```{r}
 #| label: kNN_NS_k5
@@ -206,6 +220,8 @@ confusionMatrix(data = factor(pred_table$CMS_pred),
                 reference = factor(pred_table$CMS_true))
 ```
 
+k = 7
+
 ```{r}
 #| label: kNN_NS_k7
 
@@ -228,6 +244,8 @@ confusionMatrix(data = factor(pred_table$CMS_pred),
                 reference = factor(pred_table$CMS_true))
 ```
 
+k = 9
+
 ```{r}
 #| label: kNN_NS_k9
 
@@ -249,6 +267,8 @@ table(pred_table$pred_correct)
 confusionMatrix(data = factor(pred_table$CMS_pred), 
                 reference = factor(pred_table$CMS_true))
 ```
+
+k = 11
 
 ```{r}
 #| label: kNN_NS_k11

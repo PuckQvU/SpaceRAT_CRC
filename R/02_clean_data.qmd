@@ -1,8 +1,10 @@
 ---
-title: "02_clean_data"
+title: "Cleaning the data"
 author: "Puck Quarles van Ufford"
 format: html
 ---
+
+## Packages
 
 ```{r}
 #| message: false
@@ -30,7 +32,7 @@ cms_labels <- read_delim("../data/01_cms_labels.tsv")
 head(TCGA_exprs)
 ```
 
-No further cleaning necessary.
+This data does not require additional cleaning steps.
 
 ## Clean CMS labels
 
@@ -40,10 +42,10 @@ No further cleaning necessary.
 head(cms_labels)
 ```
 
-Cleaning steps:
+Cleaning steps required:
 
 1.  Filter for TCGA data only
-2.  Select and rename relevant columns
+2.  Select and rename the relevant columns
 
 ```{r}
 #| label: clean_labels

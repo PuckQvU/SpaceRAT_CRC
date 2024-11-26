@@ -1,5 +1,5 @@
 ---
-title: "09_CMScaller"
+title: "Classification with the CMScaller package"
 author: "Puck Quarles van Ufford"
 format: html
 ---

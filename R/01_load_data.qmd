@@ -1,8 +1,10 @@
 ---
-title: "01_load_data"
+title: "Loading the data"
 author: "Puck Quarles van Ufford"
 format: html
 ---
+
+## Packages
 
 ```{r}
 #| message: false
@@ -11,14 +13,14 @@ format: html
 library("tidyverse")
 ```
 
-## Download files
+## Instructions for downloading the files
 
 Download the following files from the Colorectal Cancer Subtyping Consortium (CRCSC) [Synapse page](https://www.synapse.org/Synapse:syn2623706/files/) (DOI: [10.7303/syn2623706](https://doi.org/10.7303/syn2623706)):
 
 1.  TCGACRC_expression.tsv ([syn2161141](https://www.synapse.org/Synapse:syn2161141))
 2.  cms_labels_public_all.txt ([syn4978511](https://www.synapse.org/Synapse:syn4978511))
 
-Place these files in the "../data/\_raw" folder.
+Place these files in the `../data/_raw` folder.
 
 ## Load data
 
