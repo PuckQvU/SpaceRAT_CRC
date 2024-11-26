@@ -1,0 +1,173 @@
+---
+title: "10_SpaceRAT"
+author: "Puck Quarles van Ufford"
+format: html
+---
+
+```{r}
+#| label: seed
+
+set.seed(8)
+```
+
+## Packages
+
+```{r}
+#| message: false
+#| label: libraries
+
+library("tidyverse")
+library("spaceRAT")
+```
+
+## Load data
+
+```{r}
+#| message: false
+#| label: load_data
+
+TCGA_exprs <- read_delim("../data/04_TCGA_mapped.tsv")
+
+NS_exprs <- read_delim("../data/04_NS_mapped.tsv")
+
+cms_labels <- read_delim("../data/02_cms_labels_clean.tsv")
+```
+
+Reformat the expression data:
+
+```{r}
+#| label: reformat_data
+
+TCGA_exprs <- TCGA_exprs |> 
+  column_to_rownames("entrez")
+
+NS_exprs <- NS_exprs |> 
+  column_to_rownames("entrez")
+
+cms_labels <- cms_labels |> 
+  column_to_rownames("sample")
+```
+
+## Split data
+
+We use 90% of the data to build the scaffold and the remaining 10% to project into the scaffold for testing.
+
+```{r}
+#| label: split_data
+
+samples <- rownames(cms_labels)
+
+n <- length(samples)
+test_set <- sample(seq_len(n), size = 0.1 * n)
+
+TCGA_train <- TCGA_exprs |> 
+  select(-test_set)
+TCGA_test <- TCGA_exprs |> 
+  select(test_set)
+
+NS_train <- NS_exprs |> 
+  select(-test_set)
+NS_test <- NS_exprs |> 
+  select(test_set)
+
+cms_labels_train <- cms_labels |> 
+  slice(-test_set)
+cms_labels_test <- cms_labels |> 
+  slice(test_set)
+```
+
+## SpaceRAT scaffolds for colorectal cancer
+
+### TCGA data
+
+Build the scaffold.
+
+```{r}
+#| label: build_TCGA_scafffold
+#| message: false
+
+TCGA_scaffold <- buildScaffold(
+  object = TCGA_train,
+  pheno = cms_labels_train,
+  colname = "cms",
+  data = "exprs",
+  annotation = NULL
+)
+```
+
+Plot scaffold in PCA space.
+
+```{r}
+#| label: plot_TCGA_scafffold
+
+plotScaffold(
+  scaffold = TCGA_scaffold, 
+  title = "CRC scaffold using TCGA data",
+  dimred = "PCA", 
+  dims = c(1,2), 
+  plot_mode = "dot"
+)
+```
+
+Test the scaffold:
+
+```{r}
+#| label: test_TCGA_scafffold
+#| message: false
+
+projectSample(
+  scaffold = TCGA_scaffold,
+  sample = TCGA_test,
+  pheno = cms_labels_test,
+  colname = "cms",
+  title = "CRC Scaffold built with TCGA data",
+  annotation = NULL
+)
+```
+
+### NanoString data
+
+Build the scaffold.
+
+```{r}
+#| label: build_NS_scafffold
+#| message: false
+
+NS_scaffold <- buildScaffold(
+  object = NS_train,
+  pheno = cms_labels_train,
+  colname = "cms",
+  data = "exprs",
+  annotation = NULL
+)
+```
+
+Plot scaffold in PCA space.
+
+```{r}
+#| label: plot_NS_scafffold
+
+plotScaffold(
+  scaffold = NS_scaffold, 
+  title = "CRC scaffold using NS data",
+  dimred = "PCA", 
+  dims = c(1,2), 
+  plot_mode = "dot"
+)
+```
+
+Test the scaffold:
+
+```{r}
+#| label: test_NS_scafffold
+#| message: false
+
+projectSample(
+  scaffold = NS_scaffold,
+  sample = NS_test,
+  pheno = cms_labels_test,
+  colname = "cms",
+  title = "CRC Scaffold built with NS data",
+  annotation = NULL
+)
+```
