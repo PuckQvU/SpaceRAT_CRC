@@ -1,0 +1,87 @@
+---
+title: "09_CMScaller"
+author: "Puck Quarles van Ufford"
+format: html
+---
+
+## Packages
+
+```{r}
+#| message: false
+#| label: libraries
+
+library("tidyverse")
+library("CMScaller")
+library("caret")
+```
+
+## Load data
+
+```{r}
+#| message: false
+#| label: load_data
+
+TCGA_exprs <- read_delim("../data/04_TCGA_mapped.tsv")
+
+NS_exprs <- read_delim("../data/04_NS_mapped.tsv")
+
+cms_labels <- read_delim("../data/02_cms_labels_clean.tsv")
+```
+
+Reformat the expression data:
+
+```{r}
+#| label: reformat_data
+
+TCGA_exprs <- TCGA_exprs |> 
+  column_to_rownames("entrez")
+
+NS_exprs <- NS_exprs |> 
+  column_to_rownames("entrez")
+```
+
+## Classification using the CMScaller package
+
+### TCGA data
+
+```{r}
+#| label: CMScaller_TCGA
+#| message: false
+
+CMS_pred <- CMScaller(emat = TCGA_exprs)
+
+CMS_pred_table <- CMS_pred |> 
+  mutate(
+    prediction = as.character(prediction),
+    prediction = ifelse(is.na(prediction), "NOLBL", prediction),
+    CMS_label = cms_labels$cms,
+    pred_correct = CMS_label == prediction
+  )
+
+table(CMS_pred_table$pred_correct)
+
+confusionMatrix(data = factor(CMS_pred_table$prediction), 
+                reference = factor(CMS_pred_table$CMS_label))
+```
+
+### NanoString data
+
+```{r}
+#| label: CMScaller_NS
+#| message: false
+
+CMS_pred <- CMScaller(emat = NS_exprs)
+
+CMS_pred_table <- CMS_pred |> 
+  mutate(
+    prediction = as.character(prediction),
+    prediction = ifelse(is.na(prediction), "NOLBL", prediction),
+    CMS_label = cms_labels$cms,
+    pred_correct = CMS_label == prediction
+  )
+
+table(CMS_pred_table$pred_correct)
+
+confusionMatrix(data = factor(CMS_pred_table$prediction), 
+                reference = factor(CMS_pred_table$CMS_label))
+```
