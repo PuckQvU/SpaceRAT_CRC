@@ -11,9 +11,10 @@ format: html
 #| label: libraries
 
 library("tidyverse")
+library("GEOquery")
 ```
 
-## Instructions for downloading the files
+## RNA-seq and CMS data
 
 Download the following files from the Colorectal Cancer Subtyping Consortium (CRCSC) [Synapse page](https://www.synapse.org/Synapse:syn2623706/files/) (DOI: [10.7303/syn2623706](https://doi.org/10.7303/syn2623706)):
 
@@ -22,25 +23,47 @@ Download the following files from the Colorectal Cancer Subtyping Consortium (CR
 
 Place these files in the `../data/_raw` folder.
 
-## Load data
-
 ```{r}
 #| message: false
-#| label: load_data
+#| label: load_data_1
 
 TCGA_exprs <- read_delim("../data/_raw/TCGACRC_expression.tsv")
 
 cms_labels <- read_delim("../data/_raw/cms_labels_public_all.txt")
 ```
 
-## Save data
+Save the data:
 
 ```{r}
-#| label: save_data
+#| label: save_data_1
 
 write_tsv(TCGA_exprs,
           file = "../data/01_TCGA_exprs.tsv")
 
 write_tsv(cms_labels,
           file = "../data/01_cms_labels.tsv")
+```
+
+## NanoString CodeSet
+
+The genes in the NanoString IO360 PanCancer panel are available on GEO at [GPL27956](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL27956). 
+
+```{r}
+#| label: load_data_2
+
+NS_genes <- getGEO(GEO = "GPL27956",
+                   getGPL = FALSE)
+
+NS_genes <- NS_genes@dataTable@table |> 
+  filter(SPOT_ID == "") |>  # remove control probes 
+  select(ID)
+```
+
+Save the data:
+
+```{r}
+#| label: save_data_2
+
+write_tsv(NS_genes,
+          file = "../data/01_NS_genes.tsv")
 ```
