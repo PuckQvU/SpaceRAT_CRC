@@ -64,7 +64,8 @@ CMS_pred_table <- CMS_pred |>
 table(CMS_pred_table$pred_correct)
 
 confusionMatrix(data = factor(CMS_pred_table$RF.predictedCMS), 
-                reference = factor(CMS_pred_table$CMS_label))
+                reference = factor(CMS_pred_table$CMS_label), 
+                mode = "prec_recall")
 ```
 
 Using the single sample predictor: 
@@ -87,7 +88,8 @@ CMS_pred_table <- CMS_pred |>
 table(CMS_pred_table$pred_correct)
 
 confusionMatrix(data = factor(CMS_pred_table$SSP.predictedCMS), 
-                reference = factor(CMS_pred_table$CMS_label))
+                reference = factor(CMS_pred_table$CMS_label), 
+                mode = "prec_recall")
 ```
 
 ### NanoString data
@@ -112,7 +114,8 @@ CMS_pred_table <- CMS_pred |>
 table(CMS_pred_table$pred_correct)
 
 confusionMatrix(data = factor(CMS_pred_table$RF.predictedCMS), 
-                reference = factor(CMS_pred_table$CMS_label))
+                reference = factor(CMS_pred_table$CMS_label), 
+                mode = "prec_recall")
 ```
 
 Using the single sample predictor:
@@ -135,5 +138,6 @@ CMS_pred_table <- CMS_pred |>
 table(CMS_pred_table$pred_correct)
 
 confusionMatrix(data = factor(CMS_pred_table$SSP.predictedCMS), 
-                reference = factor(CMS_pred_table$CMS_label))
+                reference = factor(CMS_pred_table$CMS_label), 
+                mode = "prec_recall")
 ```

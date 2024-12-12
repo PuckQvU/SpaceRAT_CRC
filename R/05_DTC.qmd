@@ -72,7 +72,8 @@ colnames(pred_table) <- c("CMS_true", "CMS_pred", "pred_correct")
 table(pred_table$pred_correct)
 
 confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true))
+                reference = factor(pred_table$CMS_true), 
+                mode = "prec_recall")
 ```
 
 ### NanoString data
@@ -106,5 +107,6 @@ colnames(pred_table) <- c("CMS_true", "CMS_pred", "pred_correct")
 table(pred_table$pred_correct)
 
 confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true))
+                reference = factor(pred_table$CMS_true), 
+                mode = "prec_recall")
 ```

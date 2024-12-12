@@ -71,7 +71,8 @@ pred_table <- knn_pred |>
 table(pred_table$pred_correct)
 
 confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true))
+                reference = factor(pred_table$CMS_true), 
+                mode = "prec_recall")
 ```
 
 k = 5
@@ -95,7 +96,8 @@ pred_table <- knn_pred |>
 table(pred_table$pred_correct)
 
 confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true))
+                reference = factor(pred_table$CMS_true), 
+                mode = "prec_recall")
 ```
 
 k = 7
@@ -119,7 +121,8 @@ pred_table <- knn_pred |>
 table(pred_table$pred_correct)
 
 confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true))
+                reference = factor(pred_table$CMS_true), 
+                mode = "prec_recall")
 ```
 
 k = 9
@@ -143,7 +146,8 @@ pred_table <- knn_pred |>
 table(pred_table$pred_correct)
 
 confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true))
+                reference = factor(pred_table$CMS_true), 
+                mode = "prec_recall")
 ```
 
 k = 11
@@ -167,7 +171,8 @@ pred_table <- knn_pred |>
 table(pred_table$pred_correct)
 
 confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true))
+                reference = factor(pred_table$CMS_true), 
+                mode = "prec_recall")
 ```
 
 ### NanoString data
@@ -193,7 +198,8 @@ pred_table <- knn_pred |>
 table(pred_table$pred_correct)
 
 confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true))
+                reference = factor(pred_table$CMS_true), 
+                mode = "prec_recall")
 ```
 
 k = 5
@@ -217,7 +223,8 @@ pred_table <- knn_pred |>
 table(pred_table$pred_correct)
 
 confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true))
+                reference = factor(pred_table$CMS_true), 
+                mode = "prec_recall")
 ```
 
 k = 7
@@ -241,7 +248,8 @@ pred_table <- knn_pred |>
 table(pred_table$pred_correct)
 
 confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true))
+                reference = factor(pred_table$CMS_true), 
+                mode = "prec_recall")
 ```
 
 k = 9
@@ -265,7 +273,8 @@ pred_table <- knn_pred |>
 table(pred_table$pred_correct)
 
 confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true))
+                reference = factor(pred_table$CMS_true), 
+                mode = "prec_recall")
 ```
 
 k = 11
@@ -289,5 +298,6 @@ pred_table <- knn_pred |>
 table(pred_table$pred_correct)
 
 confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true))
+                reference = factor(pred_table$CMS_true), 
+                mode = "prec_recall")
 ```

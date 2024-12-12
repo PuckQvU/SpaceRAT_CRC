@@ -3182,7 +3182,8 @@ FALSE  TRUE
    84   179 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_pred), </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">reference =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_true))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">reference =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_true), </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">mode =</span> <span class="st">&quot;prec_recall&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
 
@@ -3208,19 +3209,17 @@ Overall Statistics
 Statistics by Class:
 
                      Class: CMS1 Class: CMS2 Class: CMS3 Class: CMS4
-Sensitivity               0.8158      0.8396     0.75862      0.5536
-Specificity               0.9422      0.8790     0.95726      0.9275
-Pos Pred Value            0.7045      0.8241     0.68750      0.6739
-Neg Pred Value            0.9680      0.8903     0.96970      0.8848
+Precision                 0.7045      0.8241     0.68750      0.6739
+Recall                    0.8158      0.8396     0.75862      0.5536
+F1                        0.7561      0.8318     0.72131      0.6078
 Prevalence                0.1445      0.4030     0.11027      0.2129
 Detection Rate            0.1179      0.3384     0.08365      0.1179
 Detection Prevalence      0.1673      0.4106     0.12167      0.1749
 Balanced Accuracy         0.8790      0.8593     0.85794      0.7406
                      Class: NOLBL
-Sensitivity               0.17647
-Specificity               0.88210
-Pos Pred Value            0.18182
-Neg Pred Value            0.87826
+Precision                 0.18182
+Recall                    0.17647
+F1                        0.17910
 Prevalence                0.12928
 Detection Rate            0.02281
 Detection Prevalence      0.12548
@@ -3269,7 +3268,8 @@ FALSE  TRUE
    76   187 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_pred), </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">reference =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_true))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">reference =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_true), </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">mode =</span> <span class="st">&quot;prec_recall&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
 
@@ -3295,19 +3295,17 @@ Overall Statistics
 Statistics by Class:
 
                      Class: CMS1 Class: CMS2 Class: CMS3 Class: CMS4
-Sensitivity               0.8947      0.7642     0.65517      0.7679
-Specificity               0.9556      0.8854     0.94872      0.9517
-Pos Pred Value            0.7727      0.8182     0.61290      0.8113
-Neg Pred Value            0.9817      0.8476     0.95690      0.9381
+Precision                 0.7727      0.8182     0.61290      0.8113
+Recall                    0.8947      0.7642     0.65517      0.7679
+F1                        0.8293      0.7902     0.63333      0.7890
 Prevalence                0.1445      0.4030     0.11027      0.2129
 Detection Rate            0.1293      0.3080     0.07224      0.1635
 Detection Prevalence      0.1673      0.3764     0.11787      0.2015
 Balanced Accuracy         0.9251      0.8248     0.80195      0.8598
                      Class: NOLBL
-Sensitivity               0.29412
-Specificity               0.88646
-Pos Pred Value            0.27778
-Neg Pred Value            0.89427
+Precision                 0.27778
+Recall                    0.29412
+F1                        0.28571
 Prevalence                0.12928
 Detection Rate            0.03802
 Detection Prevalence      0.13688
