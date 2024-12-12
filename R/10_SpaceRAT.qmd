@@ -95,6 +95,8 @@ TCGA_scaffold <- buildScaffold(
   data = "exprs",
   annotation = "entrez"
 )
+
+dim(TCGA_scaffold$rank)
 ```
 
 Plot the scaffold in PCA space:
@@ -148,6 +150,8 @@ NS_scaffold <- buildScaffold(
   data = "exprs",
   annotation = "entrez"
 )
+
+dim(NS_scaffold$rank)
 ```
 
 Plot the  scaffold in PCA space:

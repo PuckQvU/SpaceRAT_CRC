@@ -4,3 +4,5 @@
 .Ruserdata
 data/
 /.quarto/
+R/figs.qmd
+results/paper_figs/
