@@ -3170,7 +3170,7 @@ vertical-align: -.125em;
 <div class="cell-output cell-output-stdout">
 <pre><code>
 FALSE  TRUE 
-   55   208 </code></pre>
+   55   206 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_pred), </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">reference =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_true), </span>
@@ -3180,41 +3180,41 @@ FALSE  TRUE
 
           Reference
 Prediction CMS1 CMS2 CMS3 CMS4 NOLBL
-     CMS1    33    0    1    2     5
-     CMS2     0   92    1    5     9
-     CMS3     1    1   23    1     4
-     CMS4     1    5    0   48     4
-     NOLBL    3    8    4    0    12
+     CMS1    32    0    1    2     3
+     CMS2     0   95    1    5     7
+     CMS3     1    1   24    1     3
+     CMS4     1    5    0   41     5
+     NOLBL    4    5    3    7    14
 
 Overall Statistics
                                           
-               Accuracy : 0.7909          
-                 95% CI : (0.7367, 0.8384)
-    No Information Rate : 0.403           
+               Accuracy : 0.7893          
+                 95% CI : (0.7347, 0.8371)
+    No Information Rate : 0.4061          
     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
                                           
-                  Kappa : 0.7177          
+                  Kappa : 0.7151          
                                           
  Mcnemar&#39;s Test P-Value : NA              
 
 Statistics by Class:
 
                      Class: CMS1 Class: CMS2 Class: CMS3 Class: CMS4
-Precision                 0.8049      0.8598     0.76667      0.8276
-Recall                    0.8684      0.8679     0.79310      0.8571
-F1                        0.8354      0.8638     0.77966      0.8421
-Prevalence                0.1445      0.4030     0.11027      0.2129
-Detection Rate            0.1255      0.3498     0.08745      0.1825
-Detection Prevalence      0.1559      0.4068     0.11407      0.2205
-Balanced Accuracy         0.9164      0.8862     0.88159      0.9044
+Precision                 0.8421      0.8796     0.80000      0.7885
+Recall                    0.8421      0.8962     0.82759      0.7321
+F1                        0.8421      0.8879     0.81356      0.7593
+Prevalence                0.1456      0.4061     0.11111      0.2146
+Detection Rate            0.1226      0.3640     0.09195      0.1571
+Detection Prevalence      0.1456      0.4138     0.11494      0.1992
+Balanced Accuracy         0.9076      0.9062     0.90086      0.8392
                      Class: NOLBL
-Precision                 0.44444
-Recall                    0.35294
-F1                        0.39344
-Prevalence                0.12928
-Detection Rate            0.04563
-Detection Prevalence      0.10266
-Balanced Accuracy         0.64372</code></pre>
+Precision                 0.42424
+Recall                    0.43750
+F1                        0.43077
+Prevalence                0.12261
+Detection Rate            0.05364
+Detection Prevalence      0.12644
+Balanced Accuracy         0.67727</code></pre>
 </div>
 </div>
 </section>
@@ -3248,7 +3248,7 @@ Balanced Accuracy         0.64372</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 FALSE  TRUE 
-   91   172 </code></pre>
+   85   176 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_pred), </span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">reference =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_true), </span>
@@ -3258,41 +3258,41 @@ FALSE  TRUE
 
           Reference
 Prediction CMS1 CMS2 CMS3 CMS4 NOLBL
-     CMS1    32    1    2    4     6
-     CMS2     0   67    2    7     8
-     CMS3     3    7   21    0     3
-     CMS4     1    4    1   41     6
-     NOLBL    2   27    3    4    11
+     CMS1    31    1    2    4     4
+     CMS2     0   68    2    7     7
+     CMS3     2    7   20    0     2
+     CMS4     0    3    0   42     4
+     NOLBL    5   27    5    3    15
 
 Overall Statistics
                                           
-               Accuracy : 0.654           
-                 95% CI : (0.5931, 0.7114)
-    No Information Rate : 0.403           
-    P-Value [Acc &gt; NIR] : &lt; 2e-16         
+               Accuracy : 0.6743          
+                 95% CI : (0.6138, 0.7308)
+    No Information Rate : 0.4061          
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
                                           
-                  Kappa : 0.5485          
+                  Kappa : 0.5751          
                                           
- Mcnemar&#39;s Test P-Value : 0.02645         
+ Mcnemar&#39;s Test P-Value : NA              
 
 Statistics by Class:
 
                      Class: CMS1 Class: CMS2 Class: CMS3 Class: CMS4
-Precision                 0.7111      0.7976     0.61765      0.7736
-Recall                    0.8421      0.6321     0.72414      0.7321
-F1                        0.7711      0.7053     0.66667      0.7523
-Prevalence                0.1445      0.4030     0.11027      0.2129
-Detection Rate            0.1217      0.2548     0.07985      0.1559
-Detection Prevalence      0.1711      0.3194     0.12928      0.2015
-Balanced Accuracy         0.8922      0.7619     0.83429      0.8371
+Precision                 0.7381      0.8095     0.64516      0.8571
+Recall                    0.8158      0.6415     0.68966      0.7500
+F1                        0.7750      0.7158     0.66667      0.8000
+Prevalence                0.1456      0.4061     0.11111      0.2146
+Detection Rate            0.1188      0.2605     0.07663      0.1609
+Detection Prevalence      0.1609      0.3218     0.11877      0.1877
+Balanced Accuracy         0.8832      0.7691     0.82112      0.8579
                      Class: NOLBL
-Precision                 0.23404
-Recall                    0.32353
-F1                        0.27160
-Prevalence                0.12928
-Detection Rate            0.04183
-Detection Prevalence      0.17871
-Balanced Accuracy         0.58316</code></pre>
+Precision                 0.27273
+Recall                    0.46875
+F1                        0.34483
+Prevalence                0.12261
+Detection Rate            0.05747
+Detection Prevalence      0.21073
+Balanced Accuracy         0.64704</code></pre>
 </div>
 </div>
 </section>
