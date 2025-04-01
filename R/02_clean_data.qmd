@@ -67,8 +67,9 @@ TCGA_exprs_long <- TCGA_exprs |>
   pivot_longer(cols = -feature,
                names_to = "sample",
                values_to = "log_counts") |> 
+  mutate(counts = 2^log_counts - 1) |> 
   group_by(sample) |> 
-  summarise(reads = sum(log_counts)) |> 
+  summarise(reads = sum(counts)) |> 
   ungroup()
 
 read_limit <- TCGA_exprs_long |> 
