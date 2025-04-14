@@ -50,7 +50,7 @@ NS_exprs <- NS_exprs |>
 
 ### TCGA data
 
-k = 3
+#### k = 3
 
 ```{r}
 #| label: kNN_TCGA_k3
@@ -70,12 +70,22 @@ pred_table <- knn_pred |>
 
 table(pred_table$pred_correct)
 
-confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true), 
-                mode = "prec_recall")
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_tcga3 <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_tcga3 <- confusionMatrix(data = factor(pred_table$CMS_pred),
+                                reference = factor(pred_table$CMS_true), 
+                                mode = "everything")
+
+confusion_tcga3
+overall_res_tcga3 <- confusion_tcga3$overall
+by_class_res_tcga3 <- confusion_tcga3$byClass
 ```
 
-k = 5
+#### k = 5
 
 ```{r}
 #| label: kNN_TCGA_k5
@@ -95,12 +105,22 @@ pred_table <- knn_pred |>
 
 table(pred_table$pred_correct)
 
-confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true), 
-                mode = "prec_recall")
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_tcga5 <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_tcga5 <- confusionMatrix(data = factor(pred_table$CMS_pred),
+                                reference = factor(pred_table$CMS_true), 
+                                mode = "everything")
+
+confusion_tcga5
+overall_res_tcga5 <- confusion_tcga5$overall
+by_class_res_tcga5 <- confusion_tcga5$byClass
 ```
 
-k = 7
+#### k = 7
 
 ```{r}
 #| label: kNN_TCGA_k7
@@ -120,12 +140,22 @@ pred_table <- knn_pred |>
 
 table(pred_table$pred_correct)
 
-confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true), 
-                mode = "prec_recall")
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_tcga7 <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_tcga7 <- confusionMatrix(data = factor(pred_table$CMS_pred),
+                                reference = factor(pred_table$CMS_true), 
+                                mode = "everything")
+
+confusion_tcga7
+overall_res_tcga7 <- confusion_tcga7$overall
+by_class_res_tcga7 <- confusion_tcga7$byClass
 ```
 
-k = 9
+#### k = 9
 
 ```{r}
 #| label: kNN_TCGA_k9
@@ -145,12 +175,22 @@ pred_table <- knn_pred |>
 
 table(pred_table$pred_correct)
 
-confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true), 
-                mode = "prec_recall")
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_tcga9 <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_tcga9 <- confusionMatrix(data = factor(pred_table$CMS_pred),
+                                reference = factor(pred_table$CMS_true), 
+                                mode = "everything")
+
+confusion_tcga9
+overall_res_tcga9 <- confusion_tcga9$overall
+by_class_res_tcga9 <- confusion_tcga9$byClass
 ```
 
-k = 11
+#### k = 11
 
 ```{r}
 #| label: kNN_TCGA_k11
@@ -170,14 +210,24 @@ pred_table <- knn_pred |>
 
 table(pred_table$pred_correct)
 
-confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true), 
-                mode = "prec_recall")
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_tcga11 <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_tcga11 <- confusionMatrix(data = factor(pred_table$CMS_pred),
+                                reference = factor(pred_table$CMS_true), 
+                                mode = "everything")
+
+confusion_tcga11
+overall_res_tcga11 <- confusion_tcga11$overall
+by_class_res_tcga11 <- confusion_tcga11$byClass
 ```
 
 ### NanoString data
 
-k = 3
+#### k = 3
 
 ```{r}
 #| label: kNN_NS_k3
@@ -197,12 +247,22 @@ pred_table <- knn_pred |>
 
 table(pred_table$pred_correct)
 
-confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true), 
-                mode = "prec_recall")
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_ns3 <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_ns3 <- confusionMatrix(data = factor(pred_table$CMS_pred),
+                                reference = factor(pred_table$CMS_true), 
+                                mode = "everything")
+
+confusion_ns3
+overall_res_ns3 <- confusion_ns3$overall
+by_class_res_ns3 <- confusion_ns3$byClass
 ```
 
-k = 5
+#### k = 5
 
 ```{r}
 #| label: kNN_NS_k5
@@ -222,12 +282,22 @@ pred_table <- knn_pred |>
 
 table(pred_table$pred_correct)
 
-confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true), 
-                mode = "prec_recall")
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_ns5 <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_ns5 <- confusionMatrix(data = factor(pred_table$CMS_pred),
+                                reference = factor(pred_table$CMS_true), 
+                                mode = "everything")
+
+confusion_ns5
+overall_res_ns5 <- confusion_ns5$overall
+by_class_res_ns5 <- confusion_ns5$byClass
 ```
 
-k = 7
+#### k = 7
 
 ```{r}
 #| label: kNN_NS_k7
@@ -247,12 +317,22 @@ pred_table <- knn_pred |>
 
 table(pred_table$pred_correct)
 
-confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true), 
-                mode = "prec_recall")
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_ns7 <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_ns7 <- confusionMatrix(data = factor(pred_table$CMS_pred),
+                                reference = factor(pred_table$CMS_true), 
+                                mode = "everything")
+
+confusion_ns7
+overall_res_ns7 <- confusion_ns7$overall
+by_class_res_ns7 <- confusion_ns7$byClass
 ```
 
-k = 9
+#### k = 9
 
 ```{r}
 #| label: kNN_NS_k9
@@ -272,12 +352,22 @@ pred_table <- knn_pred |>
 
 table(pred_table$pred_correct)
 
-confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true), 
-                mode = "prec_recall")
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_ns9 <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_ns9 <- confusionMatrix(data = factor(pred_table$CMS_pred),
+                                reference = factor(pred_table$CMS_true), 
+                                mode = "everything")
+
+confusion_ns9
+overall_res_ns9 <- confusion_ns9$overall
+by_class_res_ns9 <- confusion_ns9$byClass
 ```
 
-k = 11
+#### k = 11
 
 ```{r}
 #| label: kNN_NS_k11
@@ -297,7 +387,50 @@ pred_table <- knn_pred |>
 
 table(pred_table$pred_correct)
 
-confusionMatrix(data = factor(pred_table$CMS_pred), 
-                reference = factor(pred_table$CMS_true), 
-                mode = "prec_recall")
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_ns11 <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_ns11 <- confusionMatrix(data = factor(pred_table$CMS_pred),
+                                reference = factor(pred_table$CMS_true), 
+                                mode = "everything")
+
+confusion_ns11
+overall_res_ns11 <- confusion_ns11$overall
+by_class_res_ns11 <- confusion_ns11$byClass
+```
+
+## Save results
+
+```{r}
+overall_res <- overall_res_tcga3 |> 
+  rbind(overall_res_tcga5, overall_res_tcga7, overall_res_tcga9, overall_res_tcga11, overall_res_ns3, overall_res_ns5, overall_res_ns7, overall_res_ns9, overall_res_ns11) |> 
+  as_tibble() |> 
+  mutate(data = c(rep("TCGA", 5), rep("NS", 5)),
+         k = rep(c(3, 5, 7, 9, 11), 2),
+         model = "kNN")
+
+write_csv(overall_res, file = "../results/07.kNN_overall.csv")
+
+by_class_res <- by_class_res_tcga3 |> 
+  rbind(by_class_res_tcga5, by_class_res_tcga7, by_class_res_tcga9, by_class_res_tcga11, by_class_res_ns3, by_class_res_ns5, by_class_res_ns7, by_class_res_ns9, by_class_res_ns11) |> 
+  as_tibble()|> 
+  mutate(class = rep(c("CMS1", "CMS2", "CMS3", "CMS4", "NOLBL"), 10),
+         data = c(rep("TCGA", 25), rep("NS", 25)),
+         k = rep(c(rep(3, 5), rep(5, 5), rep(7, 5), rep(9, 5), rep(11, 5)), 2),
+         model = "kNN")
+
+write_csv(by_class_res, file = "../results/07.kNN_byclass.csv")
+
+classification_rate <- classification_rate_tcga3 |> 
+  rbind(classification_rate_tcga5, classification_rate_tcga7, classification_rate_tcga9, classification_rate_tcga11, classification_rate_ns3, classification_rate_ns5, classification_rate_ns7, classification_rate_ns9, classification_rate_ns11) |> 
+  as_tibble() |> 
+  mutate(data = c(rep("TCGA", 5), rep("NS", 5)),
+         k = rep(c(3, 5, 7, 9, 11), 2),
+         model = "kNN")
+colnames(classification_rate) <- c("n_samples", "n_classified", "n_NOLBL", "data", "k", "model")
+
+write_csv(classification_rate, file = "../results/07.kNN_classification_rate.csv")
 ```

@@ -3083,6 +3083,7 @@ vertical-align: -.125em;
   <li><a href="#tcga-data" id="toc-tcga-data" class="nav-link" data-scroll-target="#tcga-data"><span class="header-section-number">3.1</span> TCGA data</a></li>
   <li><a href="#nanostring-data" id="toc-nanostring-data" class="nav-link" data-scroll-target="#nanostring-data"><span class="header-section-number">3.2</span> NanoString data</a></li>
   </ul></li>
+  <li><a href="#save-results" id="toc-save-results" class="nav-link" data-scroll-target="#save-results"><span class="header-section-number">4</span> Save results</a></li>
   </ul>
 </nav>
 </div>
@@ -3181,9 +3182,17 @@ vertical-align: -.125em;
 FALSE  TRUE 
    84   179 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_pred), </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">reference =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_true), </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">mode =</span> <span class="st">&quot;prec_recall&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>NOLBL_count <span class="ot">&lt;-</span> pred_table <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(CMS_pred <span class="sc">==</span> <span class="st">&quot;NOLBL&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>classification_rate_tcga <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">nrow</span>(pred_table), <span class="fu">nrow</span>(pred_table) <span class="sc">-</span> NOLBL_count, NOLBL_count)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>confusion_tcga <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_pred), </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">reference =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_true), </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">mode =</span> <span class="st">&quot;everything&quot;</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>confusion_tcga</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
 
@@ -3209,6 +3218,10 @@ Overall Statistics
 Statistics by Class:
 
                      Class: CMS1 Class: CMS2 Class: CMS3 Class: CMS4
+Sensitivity               0.8158      0.8396     0.75862      0.5536
+Specificity               0.9422      0.8790     0.95726      0.9275
+Pos Pred Value            0.7045      0.8241     0.68750      0.6739
+Neg Pred Value            0.9680      0.8903     0.96970      0.8848
 Precision                 0.7045      0.8241     0.68750      0.6739
 Recall                    0.8158      0.8396     0.75862      0.5536
 F1                        0.7561      0.8318     0.72131      0.6078
@@ -3217,6 +3230,10 @@ Detection Rate            0.1179      0.3384     0.08365      0.1179
 Detection Prevalence      0.1673      0.4106     0.12167      0.1749
 Balanced Accuracy         0.8790      0.8593     0.85794      0.7406
                      Class: NOLBL
+Sensitivity               0.17647
+Specificity               0.88210
+Pos Pred Value            0.18182
+Neg Pred Value            0.87826
 Precision                 0.18182
 Recall                    0.17647
 F1                        0.17910
@@ -3225,51 +3242,61 @@ Detection Rate            0.02281
 Detection Prevalence      0.12548
 Balanced Accuracy         0.52928</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>overall_res_tcga <span class="ot">&lt;-</span> confusion_tcga<span class="sc">$</span>overall</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>by_class_res_tcga <span class="ot">&lt;-</span> confusion_tcga<span class="sc">$</span>byClass</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="nanostring-data" class="level3" data-number="3.2">
 <h3 data-number="3.2" class="anchored" data-anchor-id="nanostring-data"><span class="header-section-number">3.2</span> NanoString data</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>pred_table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="at">ncol =</span> <span class="dv">3</span>,</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                                <span class="at">nrow =</span> <span class="dv">0</span>))</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(NS_exprs)) {</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  train_exprs <span class="ot">&lt;-</span> NS_exprs[<span class="sc">-</span>i]</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  train_CMS <span class="ot">&lt;-</span> cms_labels[<span class="sc">-</span>i,]<span class="sc">$</span>cms</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  test_exprs <span class="ot">&lt;-</span> NS_exprs[i]</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  test_CMS <span class="ot">&lt;-</span> cms_labels[i,]<span class="sc">$</span>cms</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  centroids <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (class <span class="cf">in</span> <span class="fu">unique</span>(train_CMS)) {</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    class_centroid <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(train_exprs[,train_CMS<span class="sc">==</span>class])</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    centroids <span class="ot">&lt;-</span> <span class="fu">cbind</span>(centroids, class_centroid)</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(centroids) <span class="ot">&lt;-</span> <span class="fu">unique</span>(train_CMS)</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  centroids_ranked <span class="ot">&lt;-</span> <span class="fu">apply</span>(centroids, <span class="dv">2</span>, rank)</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  test_exprs_ranked <span class="ot">&lt;-</span> <span class="fu">apply</span>(test_exprs, <span class="dv">2</span>, rank)</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">apply</span>(<span class="at">X =</span> test_exprs_ranked, </span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>               <span class="at">MARGIN =</span> <span class="dv">2</span>, </span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>               <span class="at">FUN =</span> <span class="cf">function</span>(x) <span class="fu">DistanceBlock</span>(</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>                 <span class="at">mat =</span> <span class="fu">t</span>(centroids_ranked), </span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>                 <span class="at">r =</span> x</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>                 )))</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(d) <span class="ot">&lt;-</span> <span class="fu">colnames</span>(centroids_ranked)</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  CMS_pred <span class="ot">&lt;-</span> <span class="fu">apply</span>(d, <span class="dv">1</span>, which.min)</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  CMS_pred <span class="ot">&lt;-</span> <span class="fu">colnames</span>(d)[CMS_pred]</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  pred_table <span class="ot">&lt;-</span> <span class="fu">rbind</span>(pred_table, <span class="fu">c</span>(test_CMS, CMS_pred, test_CMS<span class="sc">==</span>CMS_pred))</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(pred_table) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;CMS_true&quot;</span>, <span class="st">&quot;CMS_pred&quot;</span>, <span class="st">&quot;pred_correct&quot;</span>)</span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(pred_table<span class="sc">$</span>pred_correct)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pred_table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="at">ncol =</span> <span class="dv">3</span>,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                                <span class="at">nrow =</span> <span class="dv">0</span>))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(NS_exprs)) {</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  train_exprs <span class="ot">&lt;-</span> NS_exprs[<span class="sc">-</span>i]</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  train_CMS <span class="ot">&lt;-</span> cms_labels[<span class="sc">-</span>i,]<span class="sc">$</span>cms</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  test_exprs <span class="ot">&lt;-</span> NS_exprs[i]</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  test_CMS <span class="ot">&lt;-</span> cms_labels[i,]<span class="sc">$</span>cms</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  centroids <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (class <span class="cf">in</span> <span class="fu">unique</span>(train_CMS)) {</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    class_centroid <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(train_exprs[,train_CMS<span class="sc">==</span>class])</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    centroids <span class="ot">&lt;-</span> <span class="fu">cbind</span>(centroids, class_centroid)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(centroids) <span class="ot">&lt;-</span> <span class="fu">unique</span>(train_CMS)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  centroids_ranked <span class="ot">&lt;-</span> <span class="fu">apply</span>(centroids, <span class="dv">2</span>, rank)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  test_exprs_ranked <span class="ot">&lt;-</span> <span class="fu">apply</span>(test_exprs, <span class="dv">2</span>, rank)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">apply</span>(<span class="at">X =</span> test_exprs_ranked, </span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>               <span class="at">MARGIN =</span> <span class="dv">2</span>, </span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>               <span class="at">FUN =</span> <span class="cf">function</span>(x) <span class="fu">DistanceBlock</span>(</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>                 <span class="at">mat =</span> <span class="fu">t</span>(centroids_ranked), </span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>                 <span class="at">r =</span> x</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>                 )))</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(d) <span class="ot">&lt;-</span> <span class="fu">colnames</span>(centroids_ranked)</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  CMS_pred <span class="ot">&lt;-</span> <span class="fu">apply</span>(d, <span class="dv">1</span>, which.min)</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  CMS_pred <span class="ot">&lt;-</span> <span class="fu">colnames</span>(d)[CMS_pred]</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  pred_table <span class="ot">&lt;-</span> <span class="fu">rbind</span>(pred_table, <span class="fu">c</span>(test_CMS, CMS_pred, test_CMS<span class="sc">==</span>CMS_pred))</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(pred_table) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;CMS_true&quot;</span>, <span class="st">&quot;CMS_pred&quot;</span>, <span class="st">&quot;pred_correct&quot;</span>)</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(pred_table<span class="sc">$</span>pred_correct)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 FALSE  TRUE 
    76   187 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_pred), </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">reference =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_true), </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">mode =</span> <span class="st">&quot;prec_recall&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>NOLBL_count <span class="ot">&lt;-</span> pred_table <span class="sc">|&gt;</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(CMS_pred <span class="sc">==</span> <span class="st">&quot;NOLBL&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>classification_rate_ns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">nrow</span>(pred_table), <span class="fu">nrow</span>(pred_table) <span class="sc">-</span> NOLBL_count, NOLBL_count)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>confusion_ns <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_pred),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                                <span class="at">reference =</span> <span class="fu">factor</span>(pred_table<span class="sc">$</span>CMS_true), </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                                <span class="at">mode =</span> <span class="st">&quot;everything&quot;</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>confusion_ns</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
 
@@ -3295,6 +3322,10 @@ Overall Statistics
 Statistics by Class:
 
                      Class: CMS1 Class: CMS2 Class: CMS3 Class: CMS4
+Sensitivity               0.8947      0.7642     0.65517      0.7679
+Specificity               0.9556      0.8854     0.94872      0.9517
+Pos Pred Value            0.7727      0.8182     0.61290      0.8113
+Neg Pred Value            0.9817      0.8476     0.95690      0.9381
 Precision                 0.7727      0.8182     0.61290      0.8113
 Recall                    0.8947      0.7642     0.65517      0.7679
 F1                        0.8293      0.7902     0.63333      0.7890
@@ -3303,6 +3334,10 @@ Detection Rate            0.1293      0.3080     0.07224      0.1635
 Detection Prevalence      0.1673      0.3764     0.11787      0.2015
 Balanced Accuracy         0.9251      0.8248     0.80195      0.8598
                      Class: NOLBL
+Sensitivity               0.29412
+Specificity               0.88646
+Pos Pred Value            0.27778
+Neg Pred Value            0.89427
 Precision                 0.27778
 Recall                    0.29412
 F1                        0.28571
@@ -3311,8 +3346,45 @@ Detection Rate            0.03802
 Detection Prevalence      0.13688
 Balanced Accuracy         0.59029</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>overall_res_ns <span class="ot">&lt;-</span> confusion_ns<span class="sc">$</span>overall</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>by_class_res_ns<span class="ot">&lt;-</span> confusion_ns<span class="sc">$</span>byClass</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+</section>
+<section id="save-results" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="save-results"><span class="header-section-number">4</span> Save results</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>overall_res <span class="ot">&lt;-</span> overall_res_tcga <span class="sc">|&gt;</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(overall_res_ns) <span class="sc">|&gt;</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">data =</span> <span class="fu">c</span>(<span class="st">&quot;TCGA&quot;</span>, <span class="st">&quot;NS&quot;</span>),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">model =</span> <span class="st">&quot;rDTC&quot;</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(overall_res, <span class="at">file =</span> <span class="st">&quot;../results/06.rDTC_overall.csv&quot;</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>by_class_res <span class="ot">&lt;-</span> by_class_res_tcga <span class="sc">|&gt;</span> </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(by_class_res_ns) <span class="sc">|&gt;</span> </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()<span class="sc">|&gt;</span> </span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">class =</span> <span class="fu">c</span>(<span class="st">&quot;CMS1&quot;</span>, <span class="st">&quot;CMS2&quot;</span>, <span class="st">&quot;CMS3&quot;</span>, <span class="st">&quot;CMS4&quot;</span>, <span class="st">&quot;NOLBL&quot;</span>, <span class="st">&quot;CMS1&quot;</span>, <span class="st">&quot;CMS2&quot;</span>, <span class="st">&quot;CMS3&quot;</span>, <span class="st">&quot;CMS4&quot;</span>, <span class="st">&quot;NOLBL&quot;</span>),</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">data =</span> <span class="fu">c</span>(<span class="st">&quot;TCGA&quot;</span>, <span class="st">&quot;TCGA&quot;</span>, <span class="st">&quot;TCGA&quot;</span>, <span class="st">&quot;TCGA&quot;</span>, <span class="st">&quot;TCGA&quot;</span>, <span class="st">&quot;NS&quot;</span>, <span class="st">&quot;NS&quot;</span>, <span class="st">&quot;NS&quot;</span>, <span class="st">&quot;NS&quot;</span>, <span class="st">&quot;NS&quot;</span>),</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">model =</span> <span class="st">&quot;rDTC&quot;</span>)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(by_class_res, <span class="at">file =</span> <span class="st">&quot;../results/06.rDTC_byclass.csv&quot;</span>)</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>classification_rate <span class="ot">&lt;-</span> classification_rate_tcga <span class="sc">|&gt;</span> </span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(classification_rate_ns) <span class="sc">|&gt;</span> </span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">data =</span> <span class="fu">c</span>(<span class="st">&quot;TCGA&quot;</span>, <span class="st">&quot;NS&quot;</span>),</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">model =</span> <span class="st">&quot;rDTC&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if
+`.name_repair` is omitted as of tibble 2.0.0.
+ℹ Using compatibility `.name_repair`.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(classification_rate) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;n_samples&quot;</span>, <span class="st">&quot;n_classified&quot;</span>, <span class="st">&quot;n_NOLBL&quot;</span>, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;model&quot;</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(classification_rate, <span class="at">file =</span> <span class="st">&quot;../results/06.rDTC_classification_rate.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 
 </main>

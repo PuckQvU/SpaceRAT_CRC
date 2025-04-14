@@ -18,6 +18,7 @@ set.seed(8)
 
 library("tidyverse")
 library("spaceRAT")
+library("caret")
 ```
 
 ## Load data
@@ -95,8 +96,6 @@ TCGA_scaffold <- buildScaffold(
   data = "exprs",
   annotation = "entrez"
 )
-
-dim(TCGA_scaffold$rank)
 ```
 
 Plot the scaffold in PCA space:
@@ -150,8 +149,6 @@ NS_scaffold <- buildScaffold(
   data = "exprs",
   annotation = "entrez"
 )
-
-dim(NS_scaffold$rank)
 ```
 
 Plot the  scaffold in PCA space:
@@ -187,4 +184,250 @@ projectSample(
 )
 
 ggsave("../results/10_NS_projections.png")
+```
+
+## Classification using distance-to-centroid on scaffolds with leave-one-out cross validation
+
+### TCGA data
+
+```{r}
+#| label: DTC_TCGA_test
+#| eval: false
+#| echo: false
+
+i = 1
+classes <- c("CMS1", "CMS2", "CMS3", "CMS4", "NOLBL")
+
+# leave one out
+train_exprs <- TCGA_exprs |> 
+  select(-i)
+test_exprs <- TCGA_exprs |> 
+  select(i)
+train_CMS <- cms_labels |> 
+  slice(-i)
+test_CMS <- cms_labels |> 
+  slice(i)
+
+# build scaffold
+scaffold <- buildScaffold(
+    object = train_exprs,
+    pheno = train_CMS,
+    colname = "cms",
+    data = "exprs",
+    annotation = "entrez")
+
+# get scaffold pca and genes
+pca <- scaffold$pca$x
+scaffold_genes <- unique(unlist(scaffold$DEgenes))
+
+# calculate centroids in pca space
+centroids <- NULL
+for (class in classes) {
+  class_centroid <- data.frame(rowMeans(t(pca[train_CMS==class,])))
+  centroids <- bind_cols(centroids, class_centroid)
+}
+colnames(centroids) <- classes
+
+# project test sample in pca space
+sample_genes <- rownames(test_exprs)
+overlap_genes <- intersect(scaffold_genes, sample_genes)
+test_exprs <- test_exprs[overlap_genes, ]
+names(test_exprs) <- overlap_genes
+ranked_sample <- rank(test_exprs)
+scaffold_pca <- prcomp(t(scaffold$rank), scale. = scaffold$pca_scale)
+transformed_sample <- predict(scaffold_pca, newdata = t(ranked_sample))
+
+# calculate distance from centroids and predict label
+d <- as.matrix(dist(t(bind_cols(centroids, new = t(transformed_sample)))))
+CMS_pred <- names(which.min(d[1:5, 6]))
+
+# add to results
+c(test_CMS[1, 1], CMS_pred, test_CMS==CMS_pred)
+```
+
+```{r}
+#| label: DTC_TCGA
+#| warning: false
+#| message: false
+
+pred_table <- data.frame(matrix(ncol = 3,
+                                nrow = 0))
+classes <- c("CMS1", "CMS2", "CMS3", "CMS4", "NOLBL")
+
+for(i in 1:ncol(TCGA_exprs)) {
+  # leave one out
+  train_exprs <- TCGA_exprs |> 
+    select(-i)
+  test_exprs <- TCGA_exprs |> 
+    select(i)
+  train_CMS <- cms_labels |> 
+    slice(-i)
+  test_CMS <- cms_labels |> 
+    slice(i)
+  
+  # build scaffold
+  scaffold <- buildScaffold(
+      object = train_exprs,
+      pheno = train_CMS,
+      colname = "cms",
+      data = "exprs",
+      annotation = "entrez")
+  
+  # get scaffold pca and genes
+  pca <- scaffold$pca$x
+  scaffold_genes <- unique(unlist(scaffold$DEgenes))
+  
+  # calculate centroids in pca space
+  centroids <- NULL
+  for (class in classes) {
+    class_centroid <- data.frame(rowMeans(t(pca[train_CMS==class,])))
+    centroids <- bind_cols(centroids, class_centroid)
+  }
+  colnames(centroids) <- classes
+  
+  # project test sample in pca space
+  sample_genes <- rownames(test_exprs)
+  overlap_genes <- intersect(scaffold_genes, sample_genes)
+  test_exprs <- test_exprs[overlap_genes, ]
+  names(test_exprs) <- overlap_genes
+  ranked_sample <- rank(test_exprs)
+  scaffold_pca <- prcomp(t(scaffold$rank), scale. = scaffold$pca_scale)
+  transformed_sample <- predict(scaffold_pca, newdata = t(ranked_sample))
+  
+  # calculate distance from centroids and predict label
+  d <- as.matrix(dist(t(bind_cols(centroids, new = t(transformed_sample)))))
+  CMS_pred <- names(which.min(d[1:5, 6]))
+  
+  # add to results
+  pred_table <- rbind(pred_table, c(test_CMS[1, 1], CMS_pred, test_CMS==CMS_pred))
+}
+
+colnames(pred_table) <- c("CMS_true", "CMS_pred", "pred_correct")
+
+table(pred_table$pred_correct)
+
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_tcga <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_tcga <- confusionMatrix(data = factor(pred_table$CMS_pred), 
+                                   reference = factor(pred_table$CMS_true), 
+                                   mode = "everything")
+
+confusion_tcga
+overall_res_tcga <- confusion_tcga$overall
+by_class_res_tcga <- confusion_tcga$byClass
+```
+
+### NanoString data
+
+```{r}
+#| label: DTC_NS
+#| warning: false
+#| message: false
+
+pred_table <- data.frame(matrix(ncol = 3,
+                                nrow = 0))
+classes <- c("CMS1", "CMS2", "CMS3", "CMS4", "NOLBL")
+
+for(i in 1:ncol(NS_exprs)) {
+  # leave one out
+  train_exprs <- NS_exprs |> 
+    select(-i)
+  test_exprs <- NS_exprs |> 
+    select(i)
+  train_CMS <- cms_labels |> 
+    slice(-i)
+  test_CMS <- cms_labels |> 
+    slice(i)
+  
+  # build scaffold
+  scaffold <- buildScaffold(
+      object = train_exprs,
+      pheno = train_CMS,
+      colname = "cms",
+      data = "exprs",
+      annotation = "entrez")
+  
+  # get scaffold pca and genes
+  pca <- scaffold$pca$x
+  scaffold_genes <- unique(unlist(scaffold$DEgenes))
+  
+  # calculate centroids in pca space
+  centroids <- NULL
+  for (class in classes) {
+    class_centroid <- data.frame(rowMeans(t(pca[train_CMS==class,])))
+    centroids <- bind_cols(centroids, class_centroid)
+  }
+  colnames(centroids) <- classes
+  
+  # project test sample in pca space
+  sample_genes <- rownames(test_exprs)
+  overlap_genes <- intersect(scaffold_genes, sample_genes)
+  test_exprs <- test_exprs[overlap_genes, ]
+  names(test_exprs) <- overlap_genes
+  ranked_sample <- rank(test_exprs)
+  scaffold_pca <- prcomp(t(scaffold$rank), scale. = scaffold$pca_scale)
+  transformed_sample <- predict(scaffold_pca, newdata = t(ranked_sample))
+  
+  # calculate distance from centroids and predict label
+  d <- as.matrix(dist(t(bind_cols(centroids, new = t(transformed_sample)))))
+  CMS_pred <- names(which.min(d[1:5, 6]))
+  
+  # add to results
+  pred_table <- rbind(pred_table, c(test_CMS[1, 1], CMS_pred, test_CMS==CMS_pred))
+}
+
+colnames(pred_table) <- c("CMS_true", "CMS_pred", "pred_correct")
+
+table(pred_table$pred_correct)
+
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_ns <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_ns <- confusionMatrix(data = factor(pred_table$CMS_pred), 
+                                reference = factor(pred_table$CMS_true), 
+                                mode = "everything")
+
+confusion_ns
+overall_res_ns <- confusion_ns$overall
+by_class_res_ns <- confusion_ns$byClass
+```
+
+## Save results
+
+```{r}
+#| label: save
+#| warning: false
+
+overall_res <- overall_res_tcga |> 
+  rbind(overall_res_ns) |> 
+  as_tibble() |> 
+  mutate(data = c("TCGA", "NS"),
+         model = "SpaceRAT+DTC")
+
+write_csv(overall_res, file = "../results/10.SpaceRAT+DTC_overall.csv")
+
+by_class_res <- by_class_res_tcga |> 
+  rbind(by_class_res_ns) |> 
+  as_tibble()|> 
+  mutate(class = rep(c("CMS1", "CMS2", "CMS3", "CMS4", "NOLBL"), 2),
+         data = c(rep("TCGA", 5), rep("NS", 5)),
+         model = "SpaceRAT+DTC")
+
+write_csv(by_class_res, file = "../results/10.SpaceRAT+DTC_byclass.csv")
+
+classification_rate <- classification_rate_tcga |> 
+  rbind(classification_rate_ns) |> 
+  as_tibble() |> 
+  mutate(data = c("TCGA", "NS"),
+         model = "SpaceRAT+DTC")
+colnames(classification_rate) <- c("n_samples", "n_classified", "n_NOLBL", "data", "model")
+
+write_csv(classification_rate, file = "../results/10.SpaceRAT+DTC_classification_rate.csv")
 ```

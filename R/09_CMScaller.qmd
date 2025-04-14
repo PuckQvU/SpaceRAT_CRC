@@ -60,9 +60,19 @@ CMS_pred_table <- CMS_pred |>
 
 table(CMS_pred_table$pred_correct)
 
-confusionMatrix(data = factor(CMS_pred_table$prediction), 
-                reference = factor(CMS_pred_table$CMS_label), 
-                mode = "prec_recall")
+NOLBL_count <- CMS_pred_table |> 
+  filter(prediction == "NOLBL") |> 
+  nrow()
+
+classification_rate_tcga <- c(nrow(CMS_pred_table), nrow(CMS_pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_tcga <- confusionMatrix(data = factor(CMS_pred_table$prediction), 
+                                   reference = factor(CMS_pred_table$CMS_label), 
+                                   mode = "everything")
+
+confusion_tcga
+overall_res_tcga <- confusion_tcga$overall
+by_class_res_tcga <- confusion_tcga$byClass
 ```
 
 ### NanoString data
@@ -83,7 +93,47 @@ CMS_pred_table <- CMS_pred |>
 
 table(CMS_pred_table$pred_correct)
 
-confusionMatrix(data = factor(CMS_pred_table$prediction), 
-                reference = factor(CMS_pred_table$CMS_label), 
-                mode = "prec_recall")
+NOLBL_count <- CMS_pred_table |> 
+  filter(prediction == "NOLBL") |> 
+  nrow()
+
+classification_rate_ns <- c(nrow(CMS_pred_table), nrow(CMS_pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_ns <- confusionMatrix(data = factor(CMS_pred_table$prediction),
+                                reference = factor(CMS_pred_table$CMS_label), 
+                                mode = "everything")
+
+confusion_ns
+overall_res_ns <- confusion_ns$overall
+by_class_res_ns<- confusion_ns$byClass
+```
+
+## Save results
+
+```{r}
+overall_res <- overall_res_tcga |> 
+  rbind(overall_res_ns) |> 
+  as_tibble() |> 
+  mutate(data = c("TCGA", "NS"),
+         model = "CMScaller")
+
+write_csv(overall_res, file = "../results/09.CMScaller_overall.csv")
+
+by_class_res <- by_class_res_tcga |> 
+  rbind(by_class_res_ns) |> 
+  as_tibble()|> 
+  mutate(class = c("CMS1", "CMS2", "CMS3", "CMS4", "NOLBL", "CMS1", "CMS2", "CMS3", "CMS4", "NOLBL"),
+         data = c("TCGA", "TCGA", "TCGA", "TCGA", "TCGA", "NS", "NS", "NS", "NS", "NS"),
+         model = "CMScaller")
+
+write_csv(by_class_res, file = "../results/09.CMScaller_byclass.csv")
+
+classification_rate <- classification_rate_tcga |> 
+  rbind(classification_rate_ns) |> 
+  as_tibble() |> 
+  mutate(data = c("TCGA", "NS"),
+         model = "CMScaller")
+colnames(classification_rate) <- c("n_samples", "n_classified", "n_NOLBL", "data", "model")
+
+write_csv(classification_rate, file = "../results/09.CMScaller_classification_rate.csv")
 ```

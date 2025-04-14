@@ -1,0 +1,408 @@
+---
+title: "Compare results of distance classifiers"
+author: "Puck Quarles van Ufford"
+format: html
+---
+
+## Packages
+
+```{r}
+#| message: false
+#| label: libraries
+
+library("tidyverse")
+```
+
+## Load data
+
+```{r}
+#| message: false
+#| label: load_data
+
+DTC_overall <- read_csv("../results/05.DTC_overall.csv")
+DTC_byclass <- read_csv("../results/05.DTC_byclass.csv")
+DTC_classification_rate <- read_csv("../results/05.DTC_classification_rate.csv")
+
+rDTC_overall <- read_csv("../results/06.rDTC_overall.csv")
+rDTC_byclass <- read_csv("../results/06.rDTC_byclass.csv")
+rDTC_classification_rate <- read_csv("../results/06.rDTC_classification_rate.csv")
+
+kNN_overall <- read_csv("../results/07.kNN_overall.csv")
+kNN_byclass <- read_csv("../results/07.kNN_byclass.csv")
+kNN_classification_rate <- read_csv("../results/07.kNN_classification_rate.csv")
+
+CMSclassifier_overall <- read_csv("../results/08.CMSclassifier_overall.csv")
+CMSclassifier_byclass <- read_csv("../results/08.CMSclassifier_byclass.csv")
+CMSclassifier_classification_rate <- read_csv("../results/08.CMSclassifier_classification_rate.csv")
+
+CMScaller_overall <- read_csv("../results/09.CMScaller_overall.csv")
+CMScaller_byclass <- read_csv("../results/09.CMScaller_byclass.csv")
+CMScaller_classification_rate <- read_csv("../results/09.CMScaller_classification_rate.csv")
+
+SpaceRAT_DTC_overall <- read_csv("../results/10.SpaceRAT+DTC_overall.csv")
+SpaceRAT_DTC_byclass <- read_csv("../results/10.SpaceRAT+DTC_byclass.csv")
+SpaceRAT_DTC_classification_rate <- read_csv("../results/10.SpaceRAT+DTC_classification_rate.csv")
+```
+
+## Combine best results
+
+```{r}
+#| message: false
+#| label: combine_best
+
+kNN_best_overall <- kNN_overall |> 
+  group_by(data) |> 
+  arrange(desc(Accuracy)) |> 
+  slice(1) 
+
+kNN_best_k <- kNN_best_overall |> 
+  select(data, k)
+
+kNN_best_overall <- kNN_best_overall |> 
+  select(-k)
+
+CMSclassifier_best_overall <- CMSclassifier_overall |> 
+  group_by(data) |> 
+  arrange(desc(Accuracy)) |> 
+  slice(1) 
+
+CMSclassifier_best_mode <- CMSclassifier_best_overall |> 
+  select(data, mode)
+
+CMSclassifier_best_overall <- CMSclassifier_best_overall |> 
+  select(-mode)
+
+combined_overall <- DTC_overall |> 
+  rbind(rDTC_overall, kNN_best_overall, CMSclassifier_best_overall, CMScaller_overall, SpaceRAT_DTC_overall)
+
+combined_overall$data <- factor(combined_overall$data, levels = c("TCGA", "NS"), labels = c("RNA-seq", "NanoString"))
+
+kNN_best_byclass <- kNN_byclass |> 
+  inner_join(kNN_best_k, by = "data") |> 
+  filter(k.x == k.y) |> 
+  select(-c(k.x, k.y))
+
+CMSclassifier_best_byclass <- CMSclassifier_byclass |> 
+  inner_join(CMSclassifier_best_mode, by = "data") |> 
+  filter(mode.x == mode.y) |> 
+  select(-c(mode.x, mode.y))
+
+combined_byclass <- DTC_byclass |> 
+  rbind(rDTC_byclass, kNN_best_byclass, CMSclassifier_best_byclass, CMScaller_byclass, SpaceRAT_DTC_byclass)
+
+combined_byclass$data <- factor(combined_byclass$data, levels = c("TCGA", "NS"), labels = c("RNA-seq", "NanoString"))
+
+kNN_best_classification_rate <- kNN_classification_rate |> 
+  inner_join(kNN_best_k, by = "data") |> 
+  filter(k.x == k.y) |> 
+  select(-c(k.x, k.y))
+
+CMSclassifier_best_classification_rate <- CMSclassifier_classification_rate |> 
+  inner_join(CMSclassifier_best_mode, by = "data") |> 
+  filter(mode.x == mode.y) |> 
+  select(-c(mode.x, mode.y))
+
+combined_classification_rate <- DTC_classification_rate |> 
+  rbind(rDTC_classification_rate, kNN_best_classification_rate, CMSclassifier_best_classification_rate, CMScaller_classification_rate, SpaceRAT_DTC_classification_rate)
+
+combined_classification_rate$data <- factor(combined_classification_rate$data, levels = c("TCGA", "NS"), labels = c("RNA-seq", "NanoString"))
+```
+
+## Compare accuracy
+
+```{r}
+#| message: false
+#| label: compare_accuracy
+
+combined_overall |> 
+  ggplot(mapping = aes(x = data,
+                       y = Accuracy,
+                       group = model,
+                       color = model)) + 
+  geom_line(size = 0.5) +
+  geom_point(size = 2) +
+  geom_errorbar(aes(ymin = AccuracyLower, ymax = AccuracyUpper), width = 0.2) +
+  ylim(0, 1) +
+  labs(title = "Accuracy of different models in RNA-seq data vs. NanoString data",
+       x = "Data type",
+       y = "Accuracy",
+       color = "Model") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+## Compare classification rate
+
+```{r}
+#| message: false
+#| label: compare_classification_rate
+
+combined_classification_rate |> 
+  mutate(classification_rate = n_classified/n_samples) |> 
+  ggplot(mapping = aes(x = data,
+                       y = classification_rate,
+                       group = model,
+                       color = model)) + 
+  geom_line(size = 0.5) +
+  geom_point(size = 2) +
+  ylim(0, 1) +
+  labs(title = "Classification rate of different models in RNA-seq data vs. NanoString data",
+       x = "Data type",
+       y = "Classification rate",
+       color = "Model") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+## Compare F1
+
+```{r}
+#| message: false
+#| label: compare_f1
+
+combined_byclass |> 
+  ggplot(mapping = aes(x = data,
+                       y = F1,
+                       group = model,
+                       color = model)) + 
+  geom_line(size = 0.5) +
+  geom_point(size = 2) +
+  ylim(0, 1) +
+  facet_wrap(~ class) +
+  labs(title = "F1 score of different models in RNA-seq data vs. NanoString data",
+       x = "Data type",
+       y = "F1",
+       color = "Model") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+combined_byclass |> 
+  ggplot(mapping = aes(x = data,
+                       y = F1,
+                       group = class,
+                       color = class)) + 
+  geom_line(size = 0.5) +
+  geom_point(size = 2) +
+  ylim(0, 1) +
+  facet_wrap(~ model) +
+  labs(title = "F1 score of different models in RNA-seq data vs. NanoString data",
+       x = "Data type",
+       y = "F1",
+       color = "CMS") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+## Compare positive predictive value
+
+```{r}
+#| message: false
+#| label: compare_ppv
+
+combined_byclass |> 
+  ggplot(mapping = aes(x = data,
+                       y = `Pos Pred Value`,
+                       group = model,
+                       color = model)) + 
+  geom_line(size = 0.5) +
+  geom_point(size = 2) +
+  ylim(0, 1) +
+  facet_wrap(~ class) +
+  labs(title = "Positive predictive value of different models in RNA-seq data vs. NanoString data",
+       x = "Data type",
+       y = "PPV",
+       color = "Model") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+combined_byclass |> 
+  ggplot(mapping = aes(x = data,
+                       y = `Pos Pred Value`,
+                       group = class,
+                       color = class)) + 
+  geom_line(size = 0.5) +
+  geom_point(size = 2) +
+  ylim(0, 1) +
+  facet_wrap(~ model) +
+  labs(title = "Positive predictive value of different models in RNA-seq data vs. NanoString data",
+       x = "Data type",
+       y = "PPV",
+       color = "CMS") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+combined_byclass |> 
+  select(`Pos Pred Value`, class, data, model) |> 
+  filter(class != "NOLBL") |> 
+  group_by(data, model) |> 
+  summarise(PPV_mean = mean(`Pos Pred Value`), PPV_min = min(`Pos Pred Value`), PPV_max = max(`Pos Pred Value`)) |> 
+  ggplot(mapping = aes(x = data,
+                       y = PPV_mean,
+                       group = model,
+                       color = model)) + 
+  geom_line(size = 0.5) +
+  geom_point(size = 2) +
+  geom_errorbar(aes(ymin = PPV_min, ymax = PPV_max), width = 0.2) +
+  ylim(0, 1) +
+  labs(title = "Positive predictive value of different models in RNA-seq data vs. NanoString data",
+       x = "Data type",
+       y = "PPV",
+       color = "Model") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+## Compare sensitivity
+
+```{r}
+#| message: false
+#| label: compare_sensitivity
+
+combined_byclass |> 
+  ggplot(mapping = aes(x = data,
+                       y = Sensitivity,
+                       group = model,
+                       color = model)) + 
+  geom_line(size = 0.5) +
+  geom_point(size = 2) +
+  ylim(0, 1) +
+  facet_wrap(~ class) +
+  labs(title = "Sensitivity of different models in RNA-seq data vs. NanoString data",
+       x = "Data type",
+       y = "Sensitivity",
+       color = "Model") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+combined_byclass |> 
+  ggplot(mapping = aes(x = data,
+                       y = Sensitivity,
+                       group = class,
+                       color = class)) + 
+  geom_line(size = 0.5) +
+  geom_point(size = 2) +
+  ylim(0, 1) +
+  facet_wrap(~ model) +
+  labs(title = "Sensitivity of different models in RNA-seq data vs. NanoString data",
+       x = "Data type",
+       y = "Sensitivity",
+       color = "CMS") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+## Compare specificity
+
+```{r}
+#| message: false
+#| label: compare_specificity
+
+combined_byclass |> 
+  ggplot(mapping = aes(x = data,
+                       y = Specificity,
+                       group = model,
+                       color = model)) + 
+  geom_line(size = 0.5) +
+  geom_point(size = 2) +
+  ylim(0, 1) +
+  facet_wrap(~ class) +
+  labs(title = "Specificity of different models in RNA-seq data vs. NanoString data",
+       x = "Data type",
+       y = "Specificity",
+       color = "Model") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+combined_byclass |> 
+  ggplot(mapping = aes(x = data,
+                       y = Specificity,
+                       group = class,
+                       color = class)) + 
+  geom_line(size = 0.5) +
+  geom_point(size = 2) +
+  ylim(0, 1) +
+  facet_wrap(~ model) +
+  labs(title = "Specificity of different models in RNA-seq data vs. NanoString data",
+       x = "Data type",
+       y = "Specificity",
+       color = "CMS") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+## Compare precision
+
+```{r}
+#| message: false
+#| label: compare_precision
+
+combined_byclass |> 
+  ggplot(mapping = aes(x = data,
+                       y = Precision,
+                       group = model,
+                       color = model)) + 
+  geom_line(size = 0.5) +
+  geom_point(size = 2) +
+  ylim(0, 1) +
+  facet_wrap(~ class) +
+  labs(title = "Precision of different models in RNA-seq data vs. NanoString data",
+       x = "Data type",
+       y = "Precision",
+       color = "Model") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+combined_byclass |> 
+  ggplot(mapping = aes(x = data,
+                       y = Precision,
+                       group = class,
+                       color = class)) + 
+  geom_line(size = 0.5) +
+  geom_point(size = 2) +
+  ylim(0, 1) +
+  facet_wrap(~ model) +
+  labs(title = "Precision of different models in RNA-seq data vs. NanoString data",
+       x = "Data type",
+       y = "Precision",
+       color = "CMS") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+## Compare recall
+
+```{r}
+#| message: false
+#| label: compare_recall
+
+combined_byclass |> 
+  ggplot(mapping = aes(x = data,
+                       y = Recall,
+                       group = model,
+                       color = model)) + 
+  geom_line(size = 0.5) +
+  geom_point(size = 2) +
+  ylim(0, 1) +
+  facet_wrap(~ class) +
+  labs(title = "Recall of different models in RNA-seq data vs. NanoString data",
+       x = "Data type",
+       y = "Recall",
+       color = "Model") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+combined_byclass |> 
+  ggplot(mapping = aes(x = data,
+                       y = Recall,
+                       group = class,
+                       color = class)) + 
+  geom_line(size = 0.5) +
+  geom_point(size = 2) +
+  ylim(0, 1) +
+  facet_wrap(~ model) +
+  labs(title = "Recall of different models in RNA-seq data vs. NanoString data",
+       x = "Data type",
+       y = "Recall",
+       color = "CMS") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```

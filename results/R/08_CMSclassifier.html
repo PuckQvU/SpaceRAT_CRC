@@ -3083,6 +3083,7 @@ vertical-align: -.125em;
   <li><a href="#tcga-data" id="toc-tcga-data" class="nav-link" data-scroll-target="#tcga-data"><span class="header-section-number">3.1</span> TCGA data</a></li>
   <li><a href="#nanostring-data" id="toc-nanostring-data" class="nav-link" data-scroll-target="#nanostring-data"><span class="header-section-number">3.2</span> NanoString data</a></li>
   </ul></li>
+  <li><a href="#save-results" id="toc-save-results" class="nav-link" data-scroll-target="#save-results"><span class="header-section-number">4</span> Save results</a></li>
   </ul>
 </nav>
 </div>
@@ -3163,9 +3164,17 @@ vertical-align: -.125em;
 FALSE  TRUE 
    56   207 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">factor</span>(CMS_pred_table<span class="sc">$</span>RF.predictedCMS), </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">reference =</span> <span class="fu">factor</span>(CMS_pred_table<span class="sc">$</span>CMS_label), </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">mode =</span> <span class="st">&quot;prec_recall&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>NOLBL_count <span class="ot">&lt;-</span> CMS_pred_table <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(RF.predictedCMS <span class="sc">==</span> <span class="st">&quot;NOLBL&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>classification_rate_tcga_rf <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">nrow</span>(CMS_pred_table), <span class="fu">nrow</span>(CMS_pred_table) <span class="sc">-</span> NOLBL_count, NOLBL_count)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>confusion_tcga_rf <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">factor</span>(CMS_pred_table<span class="sc">$</span>RF.predictedCMS),</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                                <span class="at">reference =</span> <span class="fu">factor</span>(CMS_pred_table<span class="sc">$</span>CMS_label), </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                                <span class="at">mode =</span> <span class="st">&quot;everything&quot;</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>confusion_tcga_rf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
 
@@ -3191,6 +3200,10 @@ Overall Statistics
 Statistics by Class:
 
                      Class: CMS1 Class: CMS2 Class: CMS3 Class: CMS4
+Sensitivity               0.8421      0.6698     0.86207      0.9107
+Specificity               0.9911      0.9936     0.98718      0.9517
+Pos Pred Value            0.9412      0.9861     0.89286      0.8361
+Neg Pred Value            0.9738      0.8168     0.98298      0.9752
 Precision                 0.9412      0.9861     0.89286      0.8361
 Recall                    0.8421      0.6698     0.86207      0.9107
 F1                        0.8889      0.7978     0.87719      0.8718
@@ -3199,6 +3212,10 @@ Detection Rate            0.1217      0.2700     0.09506      0.1939
 Detection Prevalence      0.1293      0.2738     0.10646      0.2319
 Balanced Accuracy         0.9166      0.8317     0.92462      0.9312
                      Class: NOLBL
+Sensitivity                0.8235
+Specificity                0.8253
+Pos Pred Value             0.4118
+Neg Pred Value             0.9692
 Precision                  0.4118
 Recall                     0.8235
 F1                         0.5490
@@ -3207,30 +3224,40 @@ Detection Rate             0.1065
 Detection Prevalence       0.2586
 Balanced Accuracy          0.8244</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>overall_res_tcga_rf <span class="ot">&lt;-</span> confusion_tcga_rf<span class="sc">$</span>overall</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>by_class_res_tcga_rf <span class="ot">&lt;-</span> confusion_tcga_rf<span class="sc">$</span>byClass</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Using the single sample predictor:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>CMS_pred <span class="ot">&lt;-</span> <span class="fu">classifyCMS</span>(<span class="at">Exp =</span> TCGA_exprs,</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">method =</span> <span class="st">&quot;SSP&quot;</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>CMS_pred_table <span class="ot">&lt;-</span> CMS_pred <span class="sc">|&gt;</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="st">&quot;SSP.details&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">&quot;sample&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">SSP.predictedCMS =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(SSP.predictedCMS), <span class="st">&quot;NOLBL&quot;</span>, SSP.predictedCMS),</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">CMS_label =</span> cms_labels<span class="sc">$</span>cms,</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred_correct =</span> CMS_label <span class="sc">==</span> SSP.predictedCMS</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(CMS_pred_table<span class="sc">$</span>pred_correct)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>CMS_pred <span class="ot">&lt;-</span> <span class="fu">classifyCMS</span>(<span class="at">Exp =</span> TCGA_exprs,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">method =</span> <span class="st">&quot;SSP&quot;</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>CMS_pred_table <span class="ot">&lt;-</span> CMS_pred <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="st">&quot;SSP.details&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">&quot;sample&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">SSP.predictedCMS =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(SSP.predictedCMS), <span class="st">&quot;NOLBL&quot;</span>, SSP.predictedCMS),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">CMS_label =</span> cms_labels<span class="sc">$</span>cms,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred_correct =</span> CMS_label <span class="sc">==</span> SSP.predictedCMS</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(CMS_pred_table<span class="sc">$</span>pred_correct)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 FALSE  TRUE 
    90   173 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">factor</span>(CMS_pred_table<span class="sc">$</span>SSP.predictedCMS), </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">reference =</span> <span class="fu">factor</span>(CMS_pred_table<span class="sc">$</span>CMS_label), </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">mode =</span> <span class="st">&quot;prec_recall&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>NOLBL_count <span class="ot">&lt;-</span> CMS_pred_table <span class="sc">|&gt;</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(SSP.predictedCMS <span class="sc">==</span> <span class="st">&quot;NOLBL&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>classification_rate_tcga_ssp <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">nrow</span>(CMS_pred_table), <span class="fu">nrow</span>(CMS_pred_table) <span class="sc">-</span> NOLBL_count, NOLBL_count)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>confusion_tcga_ssp <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">factor</span>(CMS_pred_table<span class="sc">$</span>SSP.predictedCMS),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                                <span class="at">reference =</span> <span class="fu">factor</span>(CMS_pred_table<span class="sc">$</span>CMS_label), </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                                <span class="at">mode =</span> <span class="st">&quot;everything&quot;</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>confusion_tcga_ssp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
 
@@ -3256,6 +3283,10 @@ Overall Statistics
 Statistics by Class:
 
                      Class: CMS1 Class: CMS2 Class: CMS3 Class: CMS4
+Sensitivity               0.7895      1.0000     0.72414     0.12500
+Specificity               0.9689      0.7070     0.99145     1.00000
+Pos Pred Value            0.8108      0.6974     0.91304     1.00000
+Neg Pred Value            0.9646      1.0000     0.96667     0.80859
 Precision                 0.8108      0.6974     0.91304     1.00000
 Recall                    0.7895      1.0000     0.72414     0.12500
 F1                        0.8000      0.8217     0.80769     0.22222
@@ -3264,6 +3295,10 @@ Detection Rate            0.1141      0.4030     0.07985     0.02662
 Detection Prevalence      0.1407      0.5779     0.08745     0.02662
 Balanced Accuracy         0.8792      0.8535     0.85780     0.56250
                      Class: NOLBL
+Sensitivity               0.26471
+Specificity               0.84716
+Pos Pred Value            0.20455
+Neg Pred Value            0.88584
 Precision                 0.20455
 Recall                    0.26471
 F1                        0.23077
@@ -3272,33 +3307,41 @@ Detection Rate            0.03422
 Detection Prevalence      0.16730
 Balanced Accuracy         0.55593</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>overall_res_tcga_ssp <span class="ot">&lt;-</span> confusion_tcga_ssp<span class="sc">$</span>overall</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>by_class_res_tcga_ssp <span class="ot">&lt;-</span> confusion_tcga_ssp<span class="sc">$</span>byClass</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="nanostring-data" class="level3" data-number="3.2">
 <h3 data-number="3.2" class="anchored" data-anchor-id="nanostring-data"><span class="header-section-number">3.2</span> NanoString data</h3>
 <p>Using the random forest predictor:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>CMS_pred <span class="ot">&lt;-</span> <span class="fu">classifyCMS</span>(<span class="at">Exp =</span> NS_exprs,</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">method =</span> <span class="st">&quot;RF&quot;</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>CMS_pred_table <span class="ot">&lt;-</span> CMS_pred <span class="sc">|&gt;</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="st">&quot;RF.details&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">&quot;sample&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">RF.predictedCMS =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(RF.predictedCMS), <span class="st">&quot;NOLBL&quot;</span>, RF.predictedCMS),</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">CMS_label =</span> cms_labels<span class="sc">$</span>cms,</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred_correct =</span> CMS_label <span class="sc">==</span> RF.predictedCMS</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(CMS_pred_table<span class="sc">$</span>pred_correct)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>CMS_pred <span class="ot">&lt;-</span> <span class="fu">classifyCMS</span>(<span class="at">Exp =</span> NS_exprs,</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">method =</span> <span class="st">&quot;RF&quot;</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>CMS_pred_table <span class="ot">&lt;-</span> CMS_pred <span class="sc">|&gt;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="st">&quot;RF.details&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">&quot;sample&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">RF.predictedCMS =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(RF.predictedCMS), <span class="st">&quot;NOLBL&quot;</span>, RF.predictedCMS),</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">CMS_label =</span> cms_labels<span class="sc">$</span>cms,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred_correct =</span> CMS_label <span class="sc">==</span> RF.predictedCMS</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(CMS_pred_table<span class="sc">$</span>pred_correct)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 FALSE  TRUE 
   154   109 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">factor</span>(CMS_pred_table<span class="sc">$</span>RF.predictedCMS), </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">reference =</span> <span class="fu">factor</span>(CMS_pred_table<span class="sc">$</span>CMS_label), </span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">mode =</span> <span class="st">&quot;prec_recall&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>NOLBL_count <span class="ot">&lt;-</span> CMS_pred_table <span class="sc">|&gt;</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(RF.predictedCMS <span class="sc">==</span> <span class="st">&quot;NOLBL&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>classification_rate_ns_rf <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">nrow</span>(CMS_pred_table), <span class="fu">nrow</span>(CMS_pred_table) <span class="sc">-</span> NOLBL_count, NOLBL_count)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>confusion_ns_rf <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">factor</span>(CMS_pred_table<span class="sc">$</span>RF.predictedCMS),</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>                                <span class="at">reference =</span> <span class="fu">factor</span>(CMS_pred_table<span class="sc">$</span>CMS_label), </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                                <span class="at">mode =</span> <span class="st">&quot;everything&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in levels(reference) != levels(data): longer object length is not a
 multiple of shorter object length</code></pre>
@@ -3308,6 +3351,7 @@ multiple of shorter object length</code></pre>
 factor(CMS_pred_table$RF.predictedCMS), : Levels are not in the same order for
 reference and data. Refactoring data to match.</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>confusion_ns_rf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
 
@@ -3333,6 +3377,10 @@ Overall Statistics
 Statistics by Class:
 
                      Class: CMS1 Class: CMS2 Class: CMS3 Class: CMS4
+Sensitivity               0.7632      0.5283      0.0000      0.0000
+Specificity               0.9467      0.9363      1.0000      1.0000
+Pos Pred Value            0.7073      0.8485         NaN         NaN
+Neg Pred Value            0.9595      0.7462      0.8897      0.7871
 Precision                 0.7073      0.8485          NA          NA
 Recall                    0.7632      0.5283      0.0000      0.0000
 F1                        0.7342      0.6512          NA          NA
@@ -3341,6 +3389,10 @@ Detection Rate            0.1103      0.2129      0.0000      0.0000
 Detection Prevalence      0.1559      0.2510      0.0000      0.0000
 Balanced Accuracy         0.8549      0.7323      0.5000      0.5000
                      Class: NOLBL
+Sensitivity               0.70588
+Specificity               0.42358
+Pos Pred Value            0.15385
+Neg Pred Value            0.90654
 Precision                 0.15385
 Recall                    0.70588
 F1                        0.25263
@@ -3349,30 +3401,40 @@ Detection Rate            0.09125
 Detection Prevalence      0.59316
 Balanced Accuracy         0.56473</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>overall_res_ns_rf <span class="ot">&lt;-</span> confusion_ns_rf<span class="sc">$</span>overall</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>by_class_res_ns_rf <span class="ot">&lt;-</span> confusion_ns_rf<span class="sc">$</span>byClass</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Using the single sample predictor:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>CMS_pred <span class="ot">&lt;-</span> <span class="fu">classifyCMS</span>(<span class="at">Exp =</span> NS_exprs,</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">method =</span> <span class="st">&quot;SSP&quot;</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>CMS_pred_table <span class="ot">&lt;-</span> CMS_pred <span class="sc">|&gt;</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="st">&quot;SSP.details&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">&quot;sample&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">SSP.predictedCMS =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(SSP.predictedCMS), <span class="st">&quot;NOLBL&quot;</span>, SSP.predictedCMS),</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">CMS_label =</span> cms_labels<span class="sc">$</span>cms,</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred_correct =</span> CMS_label <span class="sc">==</span> SSP.predictedCMS</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(CMS_pred_table<span class="sc">$</span>pred_correct)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>CMS_pred <span class="ot">&lt;-</span> <span class="fu">classifyCMS</span>(<span class="at">Exp =</span> NS_exprs,</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">method =</span> <span class="st">&quot;SSP&quot;</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>CMS_pred_table <span class="ot">&lt;-</span> CMS_pred <span class="sc">|&gt;</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="st">&quot;SSP.details&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">&quot;sample&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">SSP.predictedCMS =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(SSP.predictedCMS), <span class="st">&quot;NOLBL&quot;</span>, SSP.predictedCMS),</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">CMS_label =</span> cms_labels<span class="sc">$</span>cms,</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred_correct =</span> CMS_label <span class="sc">==</span> SSP.predictedCMS</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(CMS_pred_table<span class="sc">$</span>pred_correct)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 FALSE  TRUE 
   112   151 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">factor</span>(CMS_pred_table<span class="sc">$</span>SSP.predictedCMS), </span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">reference =</span> <span class="fu">factor</span>(CMS_pred_table<span class="sc">$</span>CMS_label), </span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">mode =</span> <span class="st">&quot;prec_recall&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>NOLBL_count <span class="ot">&lt;-</span> CMS_pred_table <span class="sc">|&gt;</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(SSP.predictedCMS <span class="sc">==</span> <span class="st">&quot;NOLBL&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>classification_rate_ns_ssp <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">nrow</span>(CMS_pred_table), <span class="fu">nrow</span>(CMS_pred_table) <span class="sc">-</span> NOLBL_count, NOLBL_count)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>confusion_ns_ssp <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">factor</span>(CMS_pred_table<span class="sc">$</span>SSP.predictedCMS),</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>                                <span class="at">reference =</span> <span class="fu">factor</span>(CMS_pred_table<span class="sc">$</span>CMS_label), </span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>                                <span class="at">mode =</span> <span class="st">&quot;everything&quot;</span>)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>confusion_ns_ssp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
 
@@ -3398,6 +3460,10 @@ Overall Statistics
 Statistics by Class:
 
                      Class: CMS1 Class: CMS2 Class: CMS3 Class: CMS4
+Sensitivity              0.42105      0.8962     0.79310     0.14286
+Specificity              1.00000      0.7006     0.88462     1.00000
+Pos Pred Value           1.00000      0.6690     0.46000     1.00000
+Neg Pred Value           0.91093      0.9091     0.97183     0.81176
 Precision                1.00000      0.6690     0.46000     1.00000
 Recall                   0.42105      0.8962     0.79310     0.14286
 F1                       0.59259      0.7661     0.58228     0.25000
@@ -3406,6 +3472,10 @@ Detection Rate           0.06084      0.3612     0.08745     0.03042
 Detection Prevalence     0.06084      0.5399     0.19011     0.03042
 Balanced Accuracy        0.71053      0.7984     0.83886     0.57143
                      Class: NOLBL
+Sensitivity               0.26471
+Specificity               0.83406
+Pos Pred Value            0.19149
+Neg Pred Value            0.88426
 Precision                 0.19149
 Recall                    0.26471
 F1                        0.22222
@@ -3414,8 +3484,48 @@ Detection Rate            0.03422
 Detection Prevalence      0.17871
 Balanced Accuracy         0.54938</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>overall_res_ns_ssp <span class="ot">&lt;-</span> confusion_ns_ssp<span class="sc">$</span>overall</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>by_class_res_ns_ssp <span class="ot">&lt;-</span> confusion_ns_ssp<span class="sc">$</span>byClass</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+</section>
+<section id="save-results" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="save-results"><span class="header-section-number">4</span> Save results</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>overall_res <span class="ot">&lt;-</span> overall_res_tcga_rf <span class="sc">|&gt;</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(overall_res_tcga_ssp, overall_res_ns_rf, overall_res_ns_ssp) <span class="sc">|&gt;</span> </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">data =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;TCGA&quot;</span>, <span class="dv">2</span>), <span class="fu">rep</span>(<span class="st">&quot;NS&quot;</span>, <span class="dv">2</span>)),</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">mode =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;RF&quot;</span>, <span class="st">&quot;SSP&quot;</span>), <span class="dv">2</span>),</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">model =</span> <span class="st">&quot;CMSclassifier&quot;</span>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(overall_res, <span class="at">file =</span> <span class="st">&quot;../results/08.CMSclassifier_overall.csv&quot;</span>)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>by_class_res <span class="ot">&lt;-</span> by_class_res_tcga_rf <span class="sc">|&gt;</span> </span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(by_class_res_tcga_ssp, by_class_res_tcga_rf, by_class_res_tcga_ssp) <span class="sc">|&gt;</span> </span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()<span class="sc">|&gt;</span> </span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">class =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;CMS1&quot;</span>, <span class="st">&quot;CMS2&quot;</span>, <span class="st">&quot;CMS3&quot;</span>, <span class="st">&quot;CMS4&quot;</span>, <span class="st">&quot;NOLBL&quot;</span>), <span class="dv">4</span>),</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">data =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;TCGA&quot;</span>, <span class="dv">10</span>), <span class="fu">rep</span>(<span class="st">&quot;NS&quot;</span>, <span class="dv">10</span>)),</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>         <span class="at">mode =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;RF&quot;</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="st">&quot;SSP&quot;</span>, <span class="dv">5</span>)), <span class="dv">2</span>),</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>         <span class="at">model =</span> <span class="st">&quot;CMSclassifier&quot;</span>)</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(by_class_res, <span class="at">file =</span> <span class="st">&quot;../results/08.CMSclassifier_byclass.csv&quot;</span>)</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>classification_rate <span class="ot">&lt;-</span> classification_rate_tcga_rf <span class="sc">|&gt;</span> </span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(classification_rate_tcga_ssp, classification_rate_ns_rf, classification_rate_ns_ssp) <span class="sc">|&gt;</span> </span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">data =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;TCGA&quot;</span>, <span class="dv">2</span>), <span class="fu">rep</span>(<span class="st">&quot;NS&quot;</span>, <span class="dv">2</span>)),</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>         <span class="at">mode =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;RF&quot;</span>, <span class="st">&quot;SSP&quot;</span>), <span class="dv">2</span>),</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>         <span class="at">model =</span> <span class="st">&quot;CMSclassifier&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if
+`.name_repair` is omitted as of tibble 2.0.0.
+ℹ Using compatibility `.name_repair`.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(classification_rate) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;n_samples&quot;</span>, <span class="st">&quot;n_classified&quot;</span>, <span class="st">&quot;n_NOLBL&quot;</span>, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;mode&quot;</span>, <span class="st">&quot;model&quot;</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(classification_rate, <span class="at">file =</span> <span class="st">&quot;../results/08.CMSclassifier_classification_rate.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 
 </main>

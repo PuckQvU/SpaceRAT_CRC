@@ -63,9 +63,19 @@ CMS_pred_table <- CMS_pred |>
 
 table(CMS_pred_table$pred_correct)
 
-confusionMatrix(data = factor(CMS_pred_table$RF.predictedCMS), 
-                reference = factor(CMS_pred_table$CMS_label), 
-                mode = "prec_recall")
+NOLBL_count <- CMS_pred_table |> 
+  filter(RF.predictedCMS == "NOLBL") |> 
+  nrow()
+
+classification_rate_tcga_rf <- c(nrow(CMS_pred_table), nrow(CMS_pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_tcga_rf <- confusionMatrix(data = factor(CMS_pred_table$RF.predictedCMS),
+                                reference = factor(CMS_pred_table$CMS_label), 
+                                mode = "everything")
+
+confusion_tcga_rf
+overall_res_tcga_rf <- confusion_tcga_rf$overall
+by_class_res_tcga_rf <- confusion_tcga_rf$byClass
 ```
 
 Using the single sample predictor: 
@@ -87,9 +97,19 @@ CMS_pred_table <- CMS_pred |>
 
 table(CMS_pred_table$pred_correct)
 
-confusionMatrix(data = factor(CMS_pred_table$SSP.predictedCMS), 
-                reference = factor(CMS_pred_table$CMS_label), 
-                mode = "prec_recall")
+NOLBL_count <- CMS_pred_table |> 
+  filter(SSP.predictedCMS == "NOLBL") |> 
+  nrow()
+
+classification_rate_tcga_ssp <- c(nrow(CMS_pred_table), nrow(CMS_pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_tcga_ssp <- confusionMatrix(data = factor(CMS_pred_table$SSP.predictedCMS),
+                                reference = factor(CMS_pred_table$CMS_label), 
+                                mode = "everything")
+
+confusion_tcga_ssp
+overall_res_tcga_ssp <- confusion_tcga_ssp$overall
+by_class_res_tcga_ssp <- confusion_tcga_ssp$byClass
 ```
 
 ### NanoString data
@@ -113,9 +133,19 @@ CMS_pred_table <- CMS_pred |>
 
 table(CMS_pred_table$pred_correct)
 
-confusionMatrix(data = factor(CMS_pred_table$RF.predictedCMS), 
-                reference = factor(CMS_pred_table$CMS_label), 
-                mode = "prec_recall")
+NOLBL_count <- CMS_pred_table |> 
+  filter(RF.predictedCMS == "NOLBL") |> 
+  nrow()
+
+classification_rate_ns_rf <- c(nrow(CMS_pred_table), nrow(CMS_pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_ns_rf <- confusionMatrix(data = factor(CMS_pred_table$RF.predictedCMS),
+                                reference = factor(CMS_pred_table$CMS_label), 
+                                mode = "everything")
+
+confusion_ns_rf
+overall_res_ns_rf <- confusion_ns_rf$overall
+by_class_res_ns_rf <- confusion_ns_rf$byClass
 ```
 
 Using the single sample predictor:
@@ -137,7 +167,50 @@ CMS_pred_table <- CMS_pred |>
 
 table(CMS_pred_table$pred_correct)
 
-confusionMatrix(data = factor(CMS_pred_table$SSP.predictedCMS), 
-                reference = factor(CMS_pred_table$CMS_label), 
-                mode = "prec_recall")
+NOLBL_count <- CMS_pred_table |> 
+  filter(SSP.predictedCMS == "NOLBL") |> 
+  nrow()
+
+classification_rate_ns_ssp <- c(nrow(CMS_pred_table), nrow(CMS_pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_ns_ssp <- confusionMatrix(data = factor(CMS_pred_table$SSP.predictedCMS),
+                                reference = factor(CMS_pred_table$CMS_label), 
+                                mode = "everything")
+
+confusion_ns_ssp
+overall_res_ns_ssp <- confusion_ns_ssp$overall
+by_class_res_ns_ssp <- confusion_ns_ssp$byClass
+```
+
+## Save results
+
+```{r}
+overall_res <- overall_res_tcga_rf |> 
+  rbind(overall_res_tcga_ssp, overall_res_ns_rf, overall_res_ns_ssp) |> 
+  as_tibble() |> 
+  mutate(data = c(rep("TCGA", 2), rep("NS", 2)),
+         mode = rep(c("RF", "SSP"), 2),
+         model = "CMSclassifier")
+
+write_csv(overall_res, file = "../results/08.CMSclassifier_overall.csv")
+
+by_class_res <- by_class_res_tcga_rf |> 
+  rbind(by_class_res_tcga_ssp, by_class_res_tcga_rf, by_class_res_tcga_ssp) |> 
+  as_tibble()|> 
+  mutate(class = rep(c("CMS1", "CMS2", "CMS3", "CMS4", "NOLBL"), 4),
+         data = c(rep("TCGA", 10), rep("NS", 10)),
+         mode = rep(c(rep("RF", 5), rep("SSP", 5)), 2),
+         model = "CMSclassifier")
+
+write_csv(by_class_res, file = "../results/08.CMSclassifier_byclass.csv")
+
+classification_rate <- classification_rate_tcga_rf |> 
+  rbind(classification_rate_tcga_ssp, classification_rate_ns_rf, classification_rate_ns_ssp) |> 
+  as_tibble() |> 
+  mutate(data = c(rep("TCGA", 2), rep("NS", 2)),
+         mode = rep(c("RF", "SSP"), 2),
+         model = "CMSclassifier")
+colnames(classification_rate) <- c("n_samples", "n_classified", "n_NOLBL", "data", "mode", "model")
+
+write_csv(classification_rate, file = "../results/08.CMSclassifier_classification_rate.csv")
 ```
