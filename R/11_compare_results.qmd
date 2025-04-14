@@ -50,6 +50,19 @@ SpaceRAT_DTC_classification_rate <- read_csv("../results/10.SpaceRAT+DTC_classif
 #| message: false
 #| label: combine_best
 
+DTC_best_overall <- DTC_overall |> 
+  group_by(data) |> 
+  arrange(desc(Accuracy)) |> 
+  slice(1) 
+
+DTC_best_method <- DTC_best_overall |> 
+  select(data, method)
+
+DTC_best_method
+
+DTC_best_overall <- DTC_best_overall |> 
+  select(-method)
+
 kNN_best_overall <- kNN_overall |> 
   group_by(data) |> 
   arrange(desc(Accuracy)) |> 
@@ -57,6 +70,8 @@ kNN_best_overall <- kNN_overall |>
 
 kNN_best_k <- kNN_best_overall |> 
   select(data, k)
+
+kNN_best_k
 
 kNN_best_overall <- kNN_best_overall |> 
   select(-k)
@@ -69,13 +84,20 @@ CMSclassifier_best_overall <- CMSclassifier_overall |>
 CMSclassifier_best_mode <- CMSclassifier_best_overall |> 
   select(data, mode)
 
+CMSclassifier_best_mode
+
 CMSclassifier_best_overall <- CMSclassifier_best_overall |> 
   select(-mode)
 
-combined_overall <- DTC_overall |> 
+combined_overall <- DTC_best_overall |> 
   rbind(rDTC_overall, kNN_best_overall, CMSclassifier_best_overall, CMScaller_overall, SpaceRAT_DTC_overall)
 
 combined_overall$data <- factor(combined_overall$data, levels = c("TCGA", "NS"), labels = c("RNA-seq", "NanoString"))
+
+DTC_best_byclass <- DTC_byclass |> 
+  inner_join(DTC_best_method, by = "data") |> 
+  filter(method.x == method.y) |> 
+  select(-c(method.x, method.y))
 
 kNN_best_byclass <- kNN_byclass |> 
   inner_join(kNN_best_k, by = "data") |> 
@@ -87,10 +109,15 @@ CMSclassifier_best_byclass <- CMSclassifier_byclass |>
   filter(mode.x == mode.y) |> 
   select(-c(mode.x, mode.y))
 
-combined_byclass <- DTC_byclass |> 
+combined_byclass <- DTC_best_byclass |> 
   rbind(rDTC_byclass, kNN_best_byclass, CMSclassifier_best_byclass, CMScaller_byclass, SpaceRAT_DTC_byclass)
 
 combined_byclass$data <- factor(combined_byclass$data, levels = c("TCGA", "NS"), labels = c("RNA-seq", "NanoString"))
+
+DTC_best_classification_rate <- DTC_classification_rate |> 
+  inner_join(DTC_best_method, by = "data") |> 
+  filter(method.x == method.y) |> 
+  select(-c(method.x, method.y))
 
 kNN_best_classification_rate <- kNN_classification_rate |> 
   inner_join(kNN_best_k, by = "data") |> 
@@ -102,7 +129,7 @@ CMSclassifier_best_classification_rate <- CMSclassifier_classification_rate |>
   filter(mode.x == mode.y) |> 
   select(-c(mode.x, mode.y))
 
-combined_classification_rate <- DTC_classification_rate |> 
+combined_classification_rate <- DTC_best_classification_rate |> 
   rbind(rDTC_classification_rate, kNN_best_classification_rate, CMSclassifier_best_classification_rate, CMScaller_classification_rate, SpaceRAT_DTC_classification_rate)
 
 combined_classification_rate$data <- factor(combined_classification_rate$data, levels = c("TCGA", "NS"), labels = c("RNA-seq", "NanoString"))

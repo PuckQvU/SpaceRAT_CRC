@@ -43,8 +43,10 @@ NS_exprs <- NS_exprs |>
 
 ### TCGA data
 
+#### Euclidean
+
 ```{r}
-#| label: DTC_TCGA
+#| label: DTC_TCGA_euc
 
 pred_table <- data.frame(matrix(ncol = 3,
                                 nrow = 0))
@@ -75,21 +77,161 @@ NOLBL_count <- pred_table |>
   filter(CMS_pred == "NOLBL") |> 
   nrow()
 
-classification_rate_tcga <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+classification_rate_tcga_euc <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
 
-confusion_tcga <- confusionMatrix(data = factor(pred_table$CMS_pred), 
+confusion_tcga_euc <- confusionMatrix(data = factor(pred_table$CMS_pred), 
                                    reference = factor(pred_table$CMS_true), 
                                    mode = "everything")
 
-confusion_tcga
-overall_res_tcga <- confusion_tcga$overall
-by_class_res_tcga <- confusion_tcga$byClass
+confusion_tcga_euc
+overall_res_tcga_euc <- confusion_tcga_euc$overall
+by_class_res_tcga_euc <- confusion_tcga_euc$byClass
+```
+
+#### Manhattan
+
+```{r}
+#| label: DTC_TCGA_man
+
+pred_table <- data.frame(matrix(ncol = 3,
+                                nrow = 0))
+
+for(i in 1:ncol(TCGA_exprs)) {
+  train_exprs <- TCGA_exprs[-i]
+  train_CMS <- cms_labels[-i,]$cms
+  test_exprs <- TCGA_exprs[i]
+  test_CMS <- cms_labels[i,]$cms
+  
+  centroids <- NULL
+  for (class in unique(train_CMS)) {
+    class_centroid <- rowMeans(train_exprs[,train_CMS==class])
+    centroids <- cbind(centroids, class_centroid)
+  }
+  colnames(centroids) <- unique(train_CMS)
+  d <- as.matrix(dist(t(cbind(centroids, test_exprs)), 
+                      method = "manhattan"))
+  CMS_pred <- names(which.min(d[1:5, 6]))
+  
+  pred_table <- rbind(pred_table, c(test_CMS, CMS_pred, test_CMS==CMS_pred))
+}
+
+colnames(pred_table) <- c("CMS_true", "CMS_pred", "pred_correct")
+
+table(pred_table$pred_correct)
+
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_tcga_man <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_tcga_man <- confusionMatrix(data = factor(pred_table$CMS_pred), 
+                                   reference = factor(pred_table$CMS_true), 
+                                   mode = "everything")
+
+confusion_tcga_man
+overall_res_tcga_man <- confusion_tcga_man$overall
+by_class_res_tcga_man <- confusion_tcga_man$byClass
+```
+
+#### Canberra
+
+```{r}
+#| label: DTC_TCGA_can
+
+pred_table <- data.frame(matrix(ncol = 3,
+                                nrow = 0))
+
+for(i in 1:ncol(TCGA_exprs)) {
+  train_exprs <- TCGA_exprs[-i]
+  train_CMS <- cms_labels[-i,]$cms
+  test_exprs <- TCGA_exprs[i]
+  test_CMS <- cms_labels[i,]$cms
+  
+  centroids <- NULL
+  for (class in unique(train_CMS)) {
+    class_centroid <- rowMeans(train_exprs[,train_CMS==class])
+    centroids <- cbind(centroids, class_centroid)
+  }
+  colnames(centroids) <- unique(train_CMS)
+  d <- as.matrix(dist(t(cbind(centroids, test_exprs)),
+                      method = "canberra"))
+  CMS_pred <- names(which.min(d[1:5, 6]))
+  
+  pred_table <- rbind(pred_table, c(test_CMS, CMS_pred, test_CMS==CMS_pred))
+}
+
+colnames(pred_table) <- c("CMS_true", "CMS_pred", "pred_correct")
+
+table(pred_table$pred_correct)
+
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_tcga_can <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_tcga_can <- confusionMatrix(data = factor(pred_table$CMS_pred), 
+                                   reference = factor(pred_table$CMS_true), 
+                                   mode = "everything")
+
+confusion_tcga_can
+overall_res_tcga_can <- confusion_tcga_can$overall
+by_class_res_tcga_can <- confusion_tcga_can$byClass
+```
+
+#### Minkowski
+
+```{r}
+#| label: DTC_TCGA_mink
+
+pred_table <- data.frame(matrix(ncol = 3,
+                                nrow = 0))
+
+for(i in 1:ncol(TCGA_exprs)) {
+  train_exprs <- TCGA_exprs[-i]
+  train_CMS <- cms_labels[-i,]$cms
+  test_exprs <- TCGA_exprs[i]
+  test_CMS <- cms_labels[i,]$cms
+  
+  centroids <- NULL
+  for (class in unique(train_CMS)) {
+    class_centroid <- rowMeans(train_exprs[,train_CMS==class])
+    centroids <- cbind(centroids, class_centroid)
+  }
+  colnames(centroids) <- unique(train_CMS)
+  d <- as.matrix(dist(t(cbind(centroids, test_exprs)),
+                      method = "minkowski"))
+  CMS_pred <- names(which.min(d[1:5, 6]))
+  
+  pred_table <- rbind(pred_table, c(test_CMS, CMS_pred, test_CMS==CMS_pred))
+}
+
+colnames(pred_table) <- c("CMS_true", "CMS_pred", "pred_correct")
+
+table(pred_table$pred_correct)
+
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_tcga_mink <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_tcga_mink <- confusionMatrix(data = factor(pred_table$CMS_pred), 
+                                   reference = factor(pred_table$CMS_true), 
+                                   mode = "everything")
+
+confusion_tcga_mink
+overall_res_tcga_mink <- confusion_tcga_mink$overall
+by_class_res_tcga_mink <- confusion_tcga_mink$byClass
 ```
 
 ### NanoString data
 
+#### Euclidean
+
 ```{r}
-#| label: DTC_NS
+#| label: DTC_NS_euc
 
 pred_table <- data.frame(matrix(ncol = 3,
                                 nrow = 0))
@@ -120,43 +262,187 @@ NOLBL_count <- pred_table |>
   filter(CMS_pred == "NOLBL") |> 
   nrow()
 
-classification_rate_ns <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+classification_rate_ns_euc <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
 
-confusion_ns <- confusionMatrix(data = factor(pred_table$CMS_pred),
+confusion_ns_euc <- confusionMatrix(data = factor(pred_table$CMS_pred),
                                 reference = factor(pred_table$CMS_true), 
                                 mode = "everything")
 
-confusion_ns
-overall_res_ns <- confusion_ns$overall
-by_class_res_ns<- confusion_ns$byClass
+confusion_ns_euc
+overall_res_ns_euc <- confusion_ns_euc$overall
+by_class_res_ns_euc <- confusion_ns_euc$byClass
+```
+
+#### Manhattan
+
+```{r}
+#| label: DTC_NS_man
+
+pred_table <- data.frame(matrix(ncol = 3,
+                                nrow = 0))
+
+for(i in 1:ncol(NS_exprs)) {
+  train_exprs <- NS_exprs[-i]
+  train_CMS <- cms_labels[-i,]$cms
+  test_exprs <- NS_exprs[i]
+  test_CMS <- cms_labels[i,]$cms
+  
+  centroids <- NULL
+  for (class in unique(train_CMS)) {
+    class_centroid <- rowMeans(train_exprs[,train_CMS==class])
+    centroids <- cbind(centroids, class_centroid)
+  }
+  colnames(centroids) <- unique(train_CMS)
+  d <- as.matrix(dist(t(cbind(centroids, test_exprs)),
+                      method = "manhattan"))
+  CMS_pred <- names(which.min(d[1:5, 6]))
+  
+  pred_table <- rbind(pred_table, c(test_CMS, CMS_pred, test_CMS==CMS_pred))
+}
+
+colnames(pred_table) <- c("CMS_true", "CMS_pred", "pred_correct")
+
+table(pred_table$pred_correct)
+
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_ns_man <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_ns_man <- confusionMatrix(data = factor(pred_table$CMS_pred),
+                                reference = factor(pred_table$CMS_true), 
+                                mode = "everything")
+
+confusion_ns_man
+overall_res_ns_man <- confusion_ns_man$overall
+by_class_res_ns_man <- confusion_ns_man$byClass
+```
+
+#### Canberra
+
+```{r}
+#| label: DTC_NS_can
+
+pred_table <- data.frame(matrix(ncol = 3,
+                                nrow = 0))
+
+for(i in 1:ncol(NS_exprs)) {
+  train_exprs <- NS_exprs[-i]
+  train_CMS <- cms_labels[-i,]$cms
+  test_exprs <- NS_exprs[i]
+  test_CMS <- cms_labels[i,]$cms
+  
+  centroids <- NULL
+  for (class in unique(train_CMS)) {
+    class_centroid <- rowMeans(train_exprs[,train_CMS==class])
+    centroids <- cbind(centroids, class_centroid)
+  }
+  colnames(centroids) <- unique(train_CMS)
+  d <- as.matrix(dist(t(cbind(centroids, test_exprs)),
+                      method = "canberra"))
+  CMS_pred <- names(which.min(d[1:5, 6]))
+  
+  pred_table <- rbind(pred_table, c(test_CMS, CMS_pred, test_CMS==CMS_pred))
+}
+
+colnames(pred_table) <- c("CMS_true", "CMS_pred", "pred_correct")
+
+table(pred_table$pred_correct)
+
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_ns_can <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_ns_can <- confusionMatrix(data = factor(pred_table$CMS_pred),
+                                reference = factor(pred_table$CMS_true), 
+                                mode = "everything")
+
+confusion_ns_can
+overall_res_ns_can <- confusion_ns_can$overall
+by_class_res_ns_can <- confusion_ns_can$byClass
+```
+
+#### Minkowski
+
+```{r}
+#| label: DTC_NS_mink
+
+pred_table <- data.frame(matrix(ncol = 3,
+                                nrow = 0))
+
+for(i in 1:ncol(NS_exprs)) {
+  train_exprs <- NS_exprs[-i]
+  train_CMS <- cms_labels[-i,]$cms
+  test_exprs <- NS_exprs[i]
+  test_CMS <- cms_labels[i,]$cms
+  
+  centroids <- NULL
+  for (class in unique(train_CMS)) {
+    class_centroid <- rowMeans(train_exprs[,train_CMS==class])
+    centroids <- cbind(centroids, class_centroid)
+  }
+  colnames(centroids) <- unique(train_CMS)
+  d <- as.matrix(dist(t(cbind(centroids, test_exprs)),
+                      method = "minkowski"))
+  CMS_pred <- names(which.min(d[1:5, 6]))
+  
+  pred_table <- rbind(pred_table, c(test_CMS, CMS_pred, test_CMS==CMS_pred))
+}
+
+colnames(pred_table) <- c("CMS_true", "CMS_pred", "pred_correct")
+
+table(pred_table$pred_correct)
+
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_ns_mink <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_ns_mink <- confusionMatrix(data = factor(pred_table$CMS_pred),
+                                reference = factor(pred_table$CMS_true), 
+                                mode = "everything")
+
+confusion_ns_mink
+overall_res_ns_mink <- confusion_ns_mink$overall
+by_class_res_ns_mink <- confusion_ns_mink$byClass
 ```
 
 ## Save results
 
 ```{r}
-overall_res <- overall_res_tcga |> 
-  rbind(overall_res_ns) |> 
+#| label: save
+#| warning: false
+
+overall_res <- overall_res_tcga_euc |> 
+  rbind(overall_res_tcga_man, overall_res_tcga_can, overall_res_tcga_mink, overall_res_ns_euc, overall_res_ns_man, overall_res_ns_can, overall_res_ns_mink) |> 
   as_tibble() |> 
-  mutate(data = c("TCGA", "NS"),
+  mutate(data = c(rep("TCGA", 4), rep("NS", 4)),
+         method = rep(c("Euclidean", "Manhattan", "Canberra", "Minkowski"), 2),
          model = "DTC")
 
 write_csv(overall_res, file = "../results/05.DTC_overall.csv")
 
-by_class_res <- by_class_res_tcga |> 
-  rbind(by_class_res_ns) |> 
+by_class_res <- by_class_res_tcga_euc |> 
+  rbind(by_class_res_tcga_man, by_class_res_tcga_can, by_class_res_tcga_mink, by_class_res_ns_euc, by_class_res_ns_man, by_class_res_ns_can, by_class_res_ns_mink) |> 
   as_tibble()|> 
-  mutate(class = c("CMS1", "CMS2", "CMS3", "CMS4", "NOLBL", "CMS1", "CMS2", "CMS3", "CMS4", "NOLBL"),
-         data = c("TCGA", "TCGA", "TCGA", "TCGA", "TCGA", "NS", "NS", "NS", "NS", "NS"),
+  mutate(class = rep(c("CMS1", "CMS2", "CMS3", "CMS4", "NOLBL"), 8),
+         data = c(rep("TCGA", 20), rep("NS", 20)),
+         method = rep(c(rep("Euclidean", 5), rep("Manhattan", 5), rep("Canberra", 5), rep("Minkowski", 5)), 2),
          model = "DTC")
 
 write_csv(by_class_res, file = "../results/05.DTC_byclass.csv")
 
-classification_rate <- classification_rate_tcga |> 
-  rbind(classification_rate_ns) |> 
+classification_rate <- classification_rate_tcga_euc |> 
+  rbind(classification_rate_tcga_man, classification_rate_tcga_can, classification_rate_tcga_mink, classification_rate_ns_euc, classification_rate_ns_man, classification_rate_ns_can, classification_rate_ns_mink) |> 
   as_tibble() |> 
-  mutate(data = c("TCGA", "NS"),
+  mutate(data = c(rep("TCGA", 4), rep("NS", 4)),
+         method = rep(c("Euclidean", "Manhattan", "Canberra", "Minkowski"), 2),
          model = "DTC")
-colnames(classification_rate) <- c("n_samples", "n_classified", "n_NOLBL", "data", "model")
+colnames(classification_rate) <- c("n_samples", "n_classified", "n_NOLBL", "data", "method", "model")
 
 write_csv(classification_rate, file = "../results/05.DTC_classification_rate.csv")
 ```

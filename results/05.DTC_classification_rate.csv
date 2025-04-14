@@ -1,3 +1,9 @@
-n_samples,n_classified,n_NOLBL,data,model
-263,236,27,TCGA,DTC
-263,216,47,NS,DTC
+n_samples,n_classified,n_NOLBL,data,method,model
+263,236,27,TCGA,Euclidean,DTC
+263,234,29,TCGA,Manhattan,DTC
+263,172,91,TCGA,Canberra,DTC
+263,236,27,TCGA,Minkowski,DTC
+263,216,47,NS,Euclidean,DTC
+263,222,41,NS,Manhattan,DTC
+263,223,40,NS,Canberra,DTC
+263,216,47,NS,Minkowski,DTC
