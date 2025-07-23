@@ -2,7 +2,12 @@
 .Rhistory
 .RData
 .Ruserdata
+SpaceRAT_CRC.Rproj
+_quarto.yml
+.Rbuildignore
 data/
 /.quarto/
 R/figs.qmd
+R/test*
+results/R/test*
 results/paper_figs/

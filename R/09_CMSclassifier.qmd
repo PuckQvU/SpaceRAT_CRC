@@ -192,7 +192,7 @@ overall_res <- overall_res_tcga_rf |>
          mode = rep(c("RF", "SSP"), 2),
          model = "CMSclassifier")
 
-write_csv(overall_res, file = "../results/08.CMSclassifier_overall.csv")
+write_csv(overall_res, file = "../results/09.CMSclassifier_overall.csv")
 
 by_class_res <- by_class_res_tcga_rf |> 
   rbind(by_class_res_tcga_ssp, by_class_res_tcga_rf, by_class_res_tcga_ssp) |> 
@@ -202,7 +202,7 @@ by_class_res <- by_class_res_tcga_rf |>
          mode = rep(c(rep("RF", 5), rep("SSP", 5)), 2),
          model = "CMSclassifier")
 
-write_csv(by_class_res, file = "../results/08.CMSclassifier_byclass.csv")
+write_csv(by_class_res, file = "../results/09.CMSclassifier_byclass.csv")
 
 classification_rate <- classification_rate_tcga_rf |> 
   rbind(classification_rate_tcga_ssp, classification_rate_ns_rf, classification_rate_ns_ssp) |> 
@@ -212,5 +212,5 @@ classification_rate <- classification_rate_tcga_rf |>
          model = "CMSclassifier")
 colnames(classification_rate) <- c("n_samples", "n_classified", "n_NOLBL", "data", "mode", "model")
 
-write_csv(classification_rate, file = "../results/08.CMSclassifier_classification_rate.csv")
+write_csv(classification_rate, file = "../results/09.CMSclassifier_classification_rate.csv")
 ```

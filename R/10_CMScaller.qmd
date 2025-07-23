@@ -117,7 +117,7 @@ overall_res <- overall_res_tcga |>
   mutate(data = c("TCGA", "NS"),
          model = "CMScaller")
 
-write_csv(overall_res, file = "../results/09.CMScaller_overall.csv")
+write_csv(overall_res, file = "../results/10.CMScaller_overall.csv")
 
 by_class_res <- by_class_res_tcga |> 
   rbind(by_class_res_ns) |> 
@@ -126,7 +126,7 @@ by_class_res <- by_class_res_tcga |>
          data = c("TCGA", "TCGA", "TCGA", "TCGA", "TCGA", "NS", "NS", "NS", "NS", "NS"),
          model = "CMScaller")
 
-write_csv(by_class_res, file = "../results/09.CMScaller_byclass.csv")
+write_csv(by_class_res, file = "../results/10.CMScaller_byclass.csv")
 
 classification_rate <- classification_rate_tcga |> 
   rbind(classification_rate_ns) |> 
@@ -135,5 +135,5 @@ classification_rate <- classification_rate_tcga |>
          model = "CMScaller")
 colnames(classification_rate) <- c("n_samples", "n_classified", "n_NOLBL", "data", "model")
 
-write_csv(classification_rate, file = "../results/09.CMScaller_classification_rate.csv")
+write_csv(classification_rate, file = "../results/10.CMScaller_classification_rate.csv")
 ```

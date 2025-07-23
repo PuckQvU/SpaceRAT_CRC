@@ -31,17 +31,17 @@ kNN_overall <- read_csv("../results/07.kNN_overall.csv")
 kNN_byclass <- read_csv("../results/07.kNN_byclass.csv")
 kNN_classification_rate <- read_csv("../results/07.kNN_classification_rate.csv")
 
-CMSclassifier_overall <- read_csv("../results/08.CMSclassifier_overall.csv")
-CMSclassifier_byclass <- read_csv("../results/08.CMSclassifier_byclass.csv")
-CMSclassifier_classification_rate <- read_csv("../results/08.CMSclassifier_classification_rate.csv")
+MR_overall <- read_csv("../results/08.MR_overall.csv")
+MR_byclass <- read_csv("../results/08.MR_byclass.csv")
+MR_classification_rate <- read_csv("../results/08.MR_classification_rate.csv")
 
-CMScaller_overall <- read_csv("../results/09.CMScaller_overall.csv")
-CMScaller_byclass <- read_csv("../results/09.CMScaller_byclass.csv")
-CMScaller_classification_rate <- read_csv("../results/09.CMScaller_classification_rate.csv")
+CMSclassifier_overall <- read_csv("../results/09.CMSclassifier_overall.csv")
+CMSclassifier_byclass <- read_csv("../results/09.CMSclassifier_byclass.csv")
+CMSclassifier_classification_rate <- read_csv("../results/09.CMSclassifier_classification_rate.csv")
 
-SpaceRAT_DTC_overall <- read_csv("../results/10.SpaceRAT+DTC_overall.csv")
-SpaceRAT_DTC_byclass <- read_csv("../results/10.SpaceRAT+DTC_byclass.csv")
-SpaceRAT_DTC_classification_rate <- read_csv("../results/10.SpaceRAT+DTC_classification_rate.csv")
+CMScaller_overall <- read_csv("../results/10.CMScaller_overall.csv")
+CMScaller_byclass <- read_csv("../results/10.CMScaller_byclass.csv")
+CMScaller_classification_rate <- read_csv("../results/10.CMScaller_classification_rate.csv")
 ```
 
 ## Combine best results
@@ -49,6 +49,8 @@ SpaceRAT_DTC_classification_rate <- read_csv("../results/10.SpaceRAT+DTC_classif
 ```{r}
 #| message: false
 #| label: combine_best
+
+# Overall
 
 DTC_best_overall <- DTC_overall |> 
   group_by(data) |> 
@@ -90,9 +92,11 @@ CMSclassifier_best_overall <- CMSclassifier_best_overall |>
   select(-mode)
 
 combined_overall <- DTC_best_overall |> 
-  rbind(rDTC_overall, kNN_best_overall, CMSclassifier_best_overall, CMScaller_overall, SpaceRAT_DTC_overall)
+  rbind(rDTC_overall, kNN_best_overall, MR_overall, CMSclassifier_best_overall, CMScaller_overall)
 
 combined_overall$data <- factor(combined_overall$data, levels = c("TCGA", "NS"), labels = c("RNA-seq", "NanoString"))
+
+# By class
 
 DTC_best_byclass <- DTC_byclass |> 
   inner_join(DTC_best_method, by = "data") |> 
@@ -110,9 +114,11 @@ CMSclassifier_best_byclass <- CMSclassifier_byclass |>
   select(-c(mode.x, mode.y))
 
 combined_byclass <- DTC_best_byclass |> 
-  rbind(rDTC_byclass, kNN_best_byclass, CMSclassifier_best_byclass, CMScaller_byclass, SpaceRAT_DTC_byclass)
+  rbind(rDTC_byclass, kNN_best_byclass, MR_byclass, CMSclassifier_best_byclass, CMScaller_byclass)
 
 combined_byclass$data <- factor(combined_byclass$data, levels = c("TCGA", "NS"), labels = c("RNA-seq", "NanoString"))
+
+# Classification rate
 
 DTC_best_classification_rate <- DTC_classification_rate |> 
   inner_join(DTC_best_method, by = "data") |> 
@@ -130,7 +136,7 @@ CMSclassifier_best_classification_rate <- CMSclassifier_classification_rate |>
   select(-c(mode.x, mode.y))
 
 combined_classification_rate <- DTC_best_classification_rate |> 
-  rbind(rDTC_classification_rate, kNN_best_classification_rate, CMSclassifier_best_classification_rate, CMScaller_classification_rate, SpaceRAT_DTC_classification_rate)
+  rbind(rDTC_classification_rate, kNN_best_classification_rate, MR_classification_rate, CMSclassifier_best_classification_rate, CMScaller_classification_rate)
 
 combined_classification_rate$data <- factor(combined_classification_rate$data, levels = c("TCGA", "NS"), labels = c("RNA-seq", "NanoString"))
 ```

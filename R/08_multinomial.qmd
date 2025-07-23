@@ -1,0 +1,169 @@
+---
+title: "Classification with a multinomial regression model"
+author: "Puck Quarles van Ufford"
+format: html
+---
+
+## Packages
+
+```{r}
+#| message: false
+#| label: libraries
+
+library("tidyverse")
+library("glmnet")
+library("caret")
+```
+
+## Load data
+
+```{r}
+#| message: false
+#| label: load_data
+
+TCGA_exprs <- read_delim("../data/02_TCGA_exprs_clean.tsv")
+
+NS_exprs <- read_delim("../data/03_TCGA_NS_sim.tsv")
+
+cms_labels <- read_delim("../data/02_cms_labels_clean.tsv")
+```
+
+Reformat the expression data:
+
+```{r}
+#| label: reformat_data
+
+TCGA_exprs <- TCGA_exprs |> 
+  column_to_rownames("feature") |> 
+  as.matrix() |> 
+  t()
+
+NS_exprs <- NS_exprs |> 
+  column_to_rownames("feature") |> 
+  as.matrix() |> 
+  t()
+```
+
+## Classification using multinomial gression with leave-one-out cross validation
+
+### TCGA data
+
+```{r}
+#| label: MR_TCGA
+
+pred_table <- data.frame(matrix(ncol = 3,
+                                nrow = 0))
+
+for(i in 1:nrow(TCGA_exprs)) {
+  train_exprs <- TCGA_exprs[-i,]
+  train_CMS <- factor(cms_labels[-i,]$cms)
+  test_exprs <- TCGA_exprs[i,]
+  test_CMS <- cms_labels[i,]$cms
+  
+  fit <- glmnet(train_exprs, train_CMS, family = "multinomial")
+  predict <- predict(fit, 
+                     newx = t(as.matrix(test_exprs)), 
+                     s = min(fit$lambda),
+                     type = "class")
+  CMS_pred <- as.character(predict)
+
+  pred_table <- rbind(pred_table, c(test_CMS, CMS_pred, test_CMS==CMS_pred))
+}
+
+colnames(pred_table) <- c("CMS_true", "CMS_pred", "pred_correct")
+
+table(pred_table$pred_correct)
+
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_tcga <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_tcga <- confusionMatrix(data = factor(pred_table$CMS_pred), 
+                                  reference = factor(pred_table$CMS_true), 
+                                  mode = "everything")
+
+confusion_tcga
+overall_res_tcga <- confusion_tcga$overall
+by_class_res_tcga <- confusion_tcga$byClass
+```
+
+
+### NanoString data
+
+```{r}
+#| label: MR_NS
+
+pred_table <- data.frame(matrix(ncol = 3,
+                                nrow = 0))
+
+for(i in 1:nrow(NS_exprs)) {
+  train_exprs <- NS_exprs[-i,]
+  train_CMS <- factor(cms_labels[-i,]$cms)
+  test_exprs <- NS_exprs[i,]
+  test_CMS <- cms_labels[i,]$cms
+  
+  fit <- glmnet(train_exprs, train_CMS, family = "multinomial")
+  predict <- predict(fit, 
+                     newx = t(as.matrix(test_exprs)), 
+                     s = min(fit$lambda),
+                     type = "class")
+  CMS_pred <- as.character(predict)
+  
+  pred_table <- rbind(pred_table, c(test_CMS, CMS_pred, test_CMS==CMS_pred))
+}
+
+
+colnames(pred_table) <- c("CMS_true", "CMS_pred", "pred_correct")
+
+table(pred_table$pred_correct)
+
+NOLBL_count <- pred_table |> 
+  filter(CMS_pred == "NOLBL") |> 
+  nrow()
+
+classification_rate_ns <- c(nrow(pred_table), nrow(pred_table) - NOLBL_count, NOLBL_count)
+
+confusion_ns <- confusionMatrix(data = factor(pred_table$CMS_pred),
+                                reference = factor(pred_table$CMS_true), 
+                                mode = "everything")
+
+confusion_ns
+overall_res_ns <- confusion_ns$overall
+by_class_res_ns <- confusion_ns$byClass
+```
+
+
+## Save results
+
+```{r}
+#| label: save
+#| warning: false
+
+overall_res <- overall_res_tcga |> 
+  rbind(overall_res_ns) |> 
+  as_tibble() |> 
+  mutate(data = c("TCGA", "NS"),
+         model = "MR")
+
+write_csv(overall_res, file = "../results/08.MR_overall.csv")
+
+by_class_res <- by_class_res_tcga |> 
+  rbind(by_class_res_ns) |> 
+  as_tibble()|> 
+  mutate(class = rep(c("CMS1", "CMS2", "CMS3", "CMS4", "NOLBL"), 2),
+         data = c(rep("TCGA", 5), rep("NS", 5)),
+         model = "MR")
+
+write_csv(by_class_res, file = "../results/08.MR_byclass.csv")
+
+classification_rate <- classification_rate_tcga |> 
+  rbind(classification_rate_ns) |> 
+  as_tibble() |> 
+  mutate(data = c("TCGA", "NS"),
+         model = "MR")
+colnames(classification_rate) <- c("n_samples", "n_classified", "n_NOLBL", "data", "model")
+
+write_csv(classification_rate, file = "../results/08.MR_classification_rate.csv")
+```
