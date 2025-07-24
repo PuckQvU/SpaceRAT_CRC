@@ -31,9 +31,9 @@ kNN_overall <- read_csv("../results/07.kNN_overall.csv")
 kNN_byclass <- read_csv("../results/07.kNN_byclass.csv")
 kNN_classification_rate <- read_csv("../results/07.kNN_classification_rate.csv")
 
-MR_overall <- read_csv("../results/08.MR_overall.csv")
-MR_byclass <- read_csv("../results/08.MR_byclass.csv")
-MR_classification_rate <- read_csv("../results/08.MR_classification_rate.csv")
+MLR_overall <- read_csv("../results/08.MLR_overall.csv")
+MLR_byclass <- read_csv("../results/08.MLR_byclass.csv")
+MLR_classification_rate <- read_csv("../results/08.MLR_classification_rate.csv")
 
 CMSclassifier_overall <- read_csv("../results/09.CMSclassifier_overall.csv")
 CMSclassifier_byclass <- read_csv("../results/09.CMSclassifier_byclass.csv")
@@ -92,7 +92,7 @@ CMSclassifier_best_overall <- CMSclassifier_best_overall |>
   select(-mode)
 
 combined_overall <- DTC_best_overall |> 
-  rbind(rDTC_overall, kNN_best_overall, MR_overall, CMSclassifier_best_overall, CMScaller_overall)
+  rbind(rDTC_overall, kNN_best_overall, MLR_overall, CMSclassifier_best_overall, CMScaller_overall)
 
 combined_overall$data <- factor(combined_overall$data, levels = c("TCGA", "NS"), labels = c("RNA-seq", "NanoString"))
 
@@ -114,7 +114,7 @@ CMSclassifier_best_byclass <- CMSclassifier_byclass |>
   select(-c(mode.x, mode.y))
 
 combined_byclass <- DTC_best_byclass |> 
-  rbind(rDTC_byclass, kNN_best_byclass, MR_byclass, CMSclassifier_best_byclass, CMScaller_byclass)
+  rbind(rDTC_byclass, kNN_best_byclass, MLR_byclass, CMSclassifier_best_byclass, CMScaller_byclass)
 
 combined_byclass$data <- factor(combined_byclass$data, levels = c("TCGA", "NS"), labels = c("RNA-seq", "NanoString"))
 
@@ -136,7 +136,7 @@ CMSclassifier_best_classification_rate <- CMSclassifier_classification_rate |>
   select(-c(mode.x, mode.y))
 
 combined_classification_rate <- DTC_best_classification_rate |> 
-  rbind(rDTC_classification_rate, kNN_best_classification_rate, MR_classification_rate, CMSclassifier_best_classification_rate, CMScaller_classification_rate)
+  rbind(rDTC_classification_rate, kNN_best_classification_rate, MLR_classification_rate, CMSclassifier_best_classification_rate, CMScaller_classification_rate)
 
 combined_classification_rate$data <- factor(combined_classification_rate$data, levels = c("TCGA", "NS"), labels = c("RNA-seq", "NanoString"))
 ```

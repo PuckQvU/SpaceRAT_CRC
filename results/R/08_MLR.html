@@ -8,7 +8,7 @@
 
 <meta name="author" content="Puck Quarles van Ufford">
 
-<title>Classification with a multinomial regression model</title>
+<title>Classification with a multinomial logistic regression model</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3078,7 +3078,7 @@ vertical-align: -.125em;
   <ul>
   <li><a href="#packages" id="toc-packages" class="nav-link active" data-scroll-target="#packages"><span class="header-section-number">1</span> Packages</a></li>
   <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data"><span class="header-section-number">2</span> Load data</a></li>
-  <li><a href="#classification-using-multinomial-gression-with-leave-one-out-cross-validation" id="toc-classification-using-multinomial-gression-with-leave-one-out-cross-validation" class="nav-link" data-scroll-target="#classification-using-multinomial-gression-with-leave-one-out-cross-validation"><span class="header-section-number">3</span> Classification using multinomial gression with leave-one-out cross validation</a>
+  <li><a href="#classification-using-multinomial-logistic-regression-with-leave-one-out-cross-validation" id="toc-classification-using-multinomial-logistic-regression-with-leave-one-out-cross-validation" class="nav-link" data-scroll-target="#classification-using-multinomial-logistic-regression-with-leave-one-out-cross-validation"><span class="header-section-number">3</span> Classification using multinomial logistic regression with leave-one-out cross validation</a>
   <ul class="collapse">
   <li><a href="#tcga-data" id="toc-tcga-data" class="nav-link" data-scroll-target="#tcga-data"><span class="header-section-number">3.1</span> TCGA data</a></li>
   <li><a href="#nanostring-data" id="toc-nanostring-data" class="nav-link" data-scroll-target="#nanostring-data"><span class="header-section-number">3.2</span> NanoString data</a></li>
@@ -3091,7 +3091,7 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Classification with a multinomial regression model</h1>
+<h1 class="title">Classification with a multinomial logistic regression model</h1>
 </div>
 
 
@@ -3144,8 +3144,8 @@ vertical-align: -.125em;
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="classification-using-multinomial-gression-with-leave-one-out-cross-validation" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="classification-using-multinomial-gression-with-leave-one-out-cross-validation"><span class="header-section-number">3</span> Classification using multinomial gression with leave-one-out cross validation</h2>
+<section id="classification-using-multinomial-logistic-regression-with-leave-one-out-cross-validation" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="classification-using-multinomial-logistic-regression-with-leave-one-out-cross-validation"><span class="header-section-number">3</span> Classification using multinomial logistic regression with leave-one-out cross validation</h2>
 <section id="tcga-data" class="level3" data-number="3.1">
 <h3 data-number="3.1" class="anchored" data-anchor-id="tcga-data"><span class="header-section-number">3.1</span> TCGA data</h3>
 <div class="cell">
@@ -3343,27 +3343,27 @@ Balanced Accuracy         0.59960</code></pre>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(overall_res_ns) <span class="sc">|&gt;</span> </span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">data =</span> <span class="fu">c</span>(<span class="st">&quot;TCGA&quot;</span>, <span class="st">&quot;NS&quot;</span>),</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">model =</span> <span class="st">&quot;MR&quot;</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">model =</span> <span class="st">&quot;MLR&quot;</span>)</span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(overall_res, <span class="at">file =</span> <span class="st">&quot;../results/08.MR_overall.csv&quot;</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(overall_res, <span class="at">file =</span> <span class="st">&quot;../results/08.MLR_overall.csv&quot;</span>)</span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>by_class_res <span class="ot">&lt;-</span> by_class_res_tcga <span class="sc">|&gt;</span> </span>
 <span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(by_class_res_ns) <span class="sc">|&gt;</span> </span>
 <span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()<span class="sc">|&gt;</span> </span>
 <span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">class =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;CMS1&quot;</span>, <span class="st">&quot;CMS2&quot;</span>, <span class="st">&quot;CMS3&quot;</span>, <span class="st">&quot;CMS4&quot;</span>, <span class="st">&quot;NOLBL&quot;</span>), <span class="dv">2</span>),</span>
 <span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">data =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;TCGA&quot;</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="st">&quot;NS&quot;</span>, <span class="dv">5</span>)),</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">model =</span> <span class="st">&quot;MR&quot;</span>)</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">model =</span> <span class="st">&quot;MLR&quot;</span>)</span>
 <span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(by_class_res, <span class="at">file =</span> <span class="st">&quot;../results/08.MR_byclass.csv&quot;</span>)</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(by_class_res, <span class="at">file =</span> <span class="st">&quot;../results/08.MLR_byclass.csv&quot;</span>)</span>
 <span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>classification_rate <span class="ot">&lt;-</span> classification_rate_tcga <span class="sc">|&gt;</span> </span>
 <span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(classification_rate_ns) <span class="sc">|&gt;</span> </span>
 <span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">data =</span> <span class="fu">c</span>(<span class="st">&quot;TCGA&quot;</span>, <span class="st">&quot;NS&quot;</span>),</span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">model =</span> <span class="st">&quot;MR&quot;</span>)</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">model =</span> <span class="st">&quot;MLR&quot;</span>)</span>
 <span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(classification_rate) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;n_samples&quot;</span>, <span class="st">&quot;n_classified&quot;</span>, <span class="st">&quot;n_NOLBL&quot;</span>, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;model&quot;</span>)</span>
 <span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(classification_rate, <span class="at">file =</span> <span class="st">&quot;../results/08.MR_classification_rate.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(classification_rate, <span class="at">file =</span> <span class="st">&quot;../results/08.MLR_classification_rate.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 

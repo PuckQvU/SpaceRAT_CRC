@@ -1,3 +1,3 @@
 n_samples,n_classified,n_NOLBL,data,model
-263,244,19,TCGA,MR
-263,239,24,NS,MR
+263,244,19,TCGA,MLR
+263,239,24,NS,MLR

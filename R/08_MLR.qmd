@@ -1,5 +1,5 @@
 ---
-title: "Classification with a multinomial regression model"
+title: "Classification with a multinomial logistic regression model"
 author: "Puck Quarles van Ufford"
 format: html
 ---
@@ -44,12 +44,12 @@ NS_exprs <- NS_exprs |>
   t()
 ```
 
-## Classification using multinomial gression with leave-one-out cross validation
+## Classification using multinomial logistic regression with leave-one-out cross validation
 
 ### TCGA data
 
 ```{r}
-#| label: MR_TCGA
+#| label: MLR_TCGA
 
 pred_table <- data.frame(matrix(ncol = 3,
                                 nrow = 0))
@@ -93,7 +93,7 @@ by_class_res_tcga <- confusion_tcga$byClass
 ### NanoString data
 
 ```{r}
-#| label: MR_NS
+#| label: MLR_NS
 
 pred_table <- data.frame(matrix(ncol = 3,
                                 nrow = 0))
@@ -145,25 +145,25 @@ overall_res <- overall_res_tcga |>
   rbind(overall_res_ns) |> 
   as_tibble() |> 
   mutate(data = c("TCGA", "NS"),
-         model = "MR")
+         model = "MLR")
 
-write_csv(overall_res, file = "../results/08.MR_overall.csv")
+write_csv(overall_res, file = "../results/08.MLR_overall.csv")
 
 by_class_res <- by_class_res_tcga |> 
   rbind(by_class_res_ns) |> 
   as_tibble()|> 
   mutate(class = rep(c("CMS1", "CMS2", "CMS3", "CMS4", "NOLBL"), 2),
          data = c(rep("TCGA", 5), rep("NS", 5)),
-         model = "MR")
+         model = "MLR")
 
-write_csv(by_class_res, file = "../results/08.MR_byclass.csv")
+write_csv(by_class_res, file = "../results/08.MLR_byclass.csv")
 
 classification_rate <- classification_rate_tcga |> 
   rbind(classification_rate_ns) |> 
   as_tibble() |> 
   mutate(data = c("TCGA", "NS"),
-         model = "MR")
+         model = "MLR")
 colnames(classification_rate) <- c("n_samples", "n_classified", "n_NOLBL", "data", "model")
 
-write_csv(classification_rate, file = "../results/08.MR_classification_rate.csv")
+write_csv(classification_rate, file = "../results/08.MLR_classification_rate.csv")
 ```
