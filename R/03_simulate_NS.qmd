@@ -11,6 +11,7 @@ format: html
 #| label: libraries
 
 library("tidyverse")
+library("ggVennDiagram")
 ```
 
 ## Load data
@@ -24,6 +25,25 @@ TCGA_exprs <- read_delim("../data/02_TCGA_exprs_clean.tsv")
 NS_genes <- read_delim("../data/01_NS_genes.tsv", delim = "\t")
 ```
 
+## Evaluate the coverage of NanoString genes in TCGA data
+
+```{r}
+#| label: eval_coverage
+#| message: false
+
+ggVennDiagram(list(
+  Genes_TCGA = TCGA_exprs$feature,
+  Genes_NS = NS_genes$ID
+)) + 
+  coord_flip() + 
+  theme(legend.position = "None") + 
+  labs(
+    title = "Coverage of NanoString genes in TCGA dataset"
+  )
+```
+
+Not every gene in the list has an exact match in the TCGA expression dataset, but the coverage is adequate for the purposes of this project.
+
 ## Subset the expression data 
 
 ```{r}
@@ -32,8 +52,6 @@ NS_genes <- read_delim("../data/01_NS_genes.tsv", delim = "\t")
 TCGA_NS_subset <- TCGA_exprs |> 
   subset(feature %in% NS_genes$ID)
 ```
-
-Not every gene in the list has an exact match in the TCGA expression dataset, but for the purposes of this experiment, this is a fine simulation of NanoString data.
 
 ## Save data
 
